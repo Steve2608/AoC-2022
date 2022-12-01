@@ -89,8 +89,8 @@ int main() {
     struct solution* sol = solve("01/input.txt");
     if (sol == NULL) exit(EXIT_FAILURE);
 
-    printf("Part1: %d\n", sol->p1);
-    printf("Part2: %d\n", sol->p2);
+    printf("part1: %d\n", sol->p1);
+    printf("part2: %d\n", sol->p2);
 
     free(sol);
 
