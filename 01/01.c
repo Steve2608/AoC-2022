@@ -4,19 +4,17 @@
 
 #define LINE_LEN 100
 #define N_ELVES 3
-#define LAST_INDEX N_ELVES - 1
 
 struct solution {
     int p1;
     int p2;
 };
 
-void insertion_sort(int* data, int value) {
-    if (value <= data[LAST_INDEX]) return;
+void insertion_sort(int* data, size_t len, int value) {
+    if (value <= data[len - 1]) return;
 
-    data[LAST_INDEX] = value;
-
-    for (int i = LAST_INDEX - 1; i >= 0; i--) {
+    data[len - 1] = value;
+    for (int i = len - 2; i >= 0; i--) {
         if (data[i] < data[i + 1]) {
             value = data[i];
             data[i] = data[i + 1];
@@ -29,9 +27,7 @@ int* init_array(size_t len) {
     int* data = malloc(sizeof(int) * N_ELVES);
     if (data == NULL) return NULL;
 
-    for (int i = 0; i < N_ELVES; i++) {
-        data[i] = 0;
-    }
+    memset(data, 0, sizeof(int) * len);
     return data;
 }
 
@@ -60,7 +56,7 @@ struct solution* solve(const char* file_name) {
     while (fgets(line, buf_size, fp)) {
         // empty line
         if (line[0] == '\n') {
-            insertion_sort(data, curr_elf);
+            insertion_sort(data, N_ELVES, curr_elf);
             curr_elf = 0;
         } else {
             int val = atoi(line);
