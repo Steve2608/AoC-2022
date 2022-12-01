@@ -4,37 +4,16 @@
 
 #define LINE_LEN 10
 
-int part1(const char* file_name) {
+struct solution {
+    int p1;
+    int p2;
+};
+
+struct solution* solve(const char* file_name) {
     FILE* fp = fopen(file_name, "r");
     if (fp == NULL) {
         perror(file_name);
-        return -1;
-    }
-
-    int max_elf = -1;
-    int curr_elf = 0;
-
-    char line[LINE_LEN];
-    while (fgets(line, sizeof(line), fp)) {
-        if (line[0] == '\n') {
-            if (curr_elf > max_elf) {
-                max_elf = curr_elf;
-            }
-            curr_elf = 0;
-        } else {
-            curr_elf += atoi(line);
-        }
-    }
-    fclose(fp);
-
-    return max_elf;
-}
-
-int part2(const char* file_name) {
-    FILE* fp = fopen(file_name, "r");
-    if (fp == NULL) {
-        perror(file_name);
-        return -1;
+        return NULL;
     }
 
     int elf_1 = -1;
@@ -58,18 +37,30 @@ int part2(const char* file_name) {
             }
             curr_elf = 0;
         } else {
-            curr_elf += atoi(line);
+            int val = atoi(line);
+            if (val <= 0) {
+                perror("Invalid value encountered");
+            } else {
+                curr_elf += val;
+            }
         }
     }
     fclose(fp);
 
-    return elf_1 + elf_2 + elf_3;
+    struct solution* sol = malloc(sizeof(struct solution));
+    sol->p1 = elf_1;
+    sol->p2 = elf_1 + elf_2 + elf_3;
+    return sol;
 }
 
 int main() {
-    int p1 = part1("01/input.txt");
-    printf("Part1: %d\n", p1);
+    struct solution* sol = solve("01/input.txt");
+    if (sol == NULL) exit(EXIT_FAILURE);
 
-    int p2 = part2("01/input.txt");
-    printf("Part2: %d\n", p2);
+    printf("Part1: %d\n", sol->p1);
+    printf("Part2: %d\n", sol->p2);
+
+    free(sol);
+
+    exit(EXIT_SUCCESS);
 }
