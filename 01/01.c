@@ -48,7 +48,8 @@ struct solution* solve(const char* file_name) {
         return NULL;
     }
 
-    char* line = malloc(sizeof(char) * LINE_LEN);
+    size_t buf_size = sizeof(char) * LINE_LEN;
+    char* line = malloc(buf_size);
     if (line == NULL) {
         fclose(fp);
         free(data);
@@ -56,7 +57,7 @@ struct solution* solve(const char* file_name) {
     }
 
     int curr_elf = 0;
-    while (fgets(line, sizeof(char) * LINE_LEN, fp)) {
+    while (fgets(line, buf_size, fp)) {
         // empty line
         if (line[0] == '\n') {
             insertion_sort(data, curr_elf);
@@ -74,8 +75,10 @@ struct solution* solve(const char* file_name) {
     free(line);
 
     struct solution* sol = malloc(sizeof(struct solution));
-    if (sol == NULL) return NULL;
-
+    if (sol == NULL) {
+        free(data);
+        return NULL;
+    }
     sol->p1 = data[0];
     sol->p2 = sol->p1;
     for (int i = 1; i < N_ELVES; i++) {
