@@ -1,2 +1,6 @@
+# IDEs
+.idea/
+.vscode/
+
 # no input.txt files
 */input.txt
