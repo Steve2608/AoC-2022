@@ -1,3 +1,6 @@
+from time import perf_counter_ns as timestamp_nano
+
+
 def part1(data: list[list[str]]) -> int:
     diff = ord('X') - ord('A')
     wins = {('A', 'Y'), ('B', 'Z'), ('C', 'X')}
@@ -38,8 +41,14 @@ def part2(data: list[list[str]]) -> int:
 
 
 if __name__ == '__main__':
+    start = timestamp_nano()
+
     with open('02/input.txt') as in_file:
         data = [game.rstrip().split(' ') for game in in_file]
 
     print(f'part1: {part1(data)}')
     print(f'part2: {part2(data)}')
+
+    end = timestamp_nano()
+    print(f'{(end - start) / 1000:.3f}µs')
+ 
