@@ -1,50 +1,32 @@
-function part1(data)::Int
-    diff = 'X' - 'A'
-    offset = 'W'
+part1(data)::Int = sum(
+    (you - 'W') + # ASCII hax
+    ifelse(opp + ('X' - 'A') == you,
+        3,
+        ifelse((opp == 'A' && you == 'Y') || (opp == 'B' && you == 'Z') || (opp == 'C' && you == 'X'),
+            6,
+            0 # empty case
+        )
+    ) for (opp, _, you) in data
+)
 
-    score = 0
-    for (opp, _, you) in data
-        if (opp + diff == you)
-            score += 3
-        elseif ((opp == 'A' && you == 'Y') || (opp == 'B' && you == 'Z') ||
-                (opp == 'C' && you == 'X'))
-            score += 6
-        end
-
-        score += you - offset
-    end
-
-    return score
-end
-
-
-function part2(data)::Int
-    score = 0
-    for (opp, _, you) in data
-        if (you == 'X') # loss
-            if (opp == 'A')
-                score += 3
-            elseif (opp == 'B')
-                score += 1
-            else
-                score += 2
-            end
-        elseif (you == 'Y') # draw
-            score += 3 + (opp - 'A' + 1)
-        else # win
-            score += 6
-            if (opp == 'A')
-                score += 2
-            elseif (opp == 'B')
-                score += 3
-            else
-                score += 1
-            end
-        end
-    end
-
-    return score
-end
+part2(data)::Int = sum(
+    ifelse(you == 'X', # loss
+        ifelse(opp == 'A',
+            3,
+            ifelse(opp == 'B', 1, 2)
+        ),
+        ifelse(you == 'Y', # draw
+            3 + (opp - 'A' + 1),
+            6 + ifelse(opp == 'A', # win
+                2,
+                ifelse(opp == 'B',
+                    3,
+                    1
+                )
+            )
+        )
+    ) for (opp, _, you) in data
+)
 
 data = open("02/input.txt") do in_file
     split(read(in_file, String), "\n")
