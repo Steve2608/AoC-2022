@@ -17,4 +17,4 @@ println("part1: ", data[1])
 println("part2: ", sum(data))
 
 end_ = timestamp_nano()
-println("time: ", round((end_ - start) / 1000, digits=3), "µs")
+println("time: ", round((end_ - start) / 1000, digits=1), "µs")

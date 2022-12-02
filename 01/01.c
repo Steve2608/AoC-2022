@@ -104,7 +104,7 @@ int main() {
     free(sol);
 
     unsigned long end = timestamp_nano();
-    printf("time: %.3fµs\n", (end - start) / 1000.0);
+    printf("time: %.1fµs\n", (end - start) / 1000.0);
 
     exit(EXIT_SUCCESS);
 }
