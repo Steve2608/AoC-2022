@@ -1,3 +1,5 @@
+timestamp_nano() = Int(round(time() * 1e9))
+
 part1(data)::Int = sum(
     (you - 'W') + # ASCII hax
     ifelse(opp + ('X' - 'A') == you,
@@ -28,9 +30,14 @@ part2(data)::Int = sum(
     ) for (opp, _, you) in data
 )
 
+start = timestamp_nano()
+
 data = open("02/input.txt") do in_file
     split(read(in_file, String), "\n")
 end
 
 println("part1: ", part1(data))
 println("part2: ", part2(data))
+
+end_ = timestamp_nano()
+println("time: ", round((end_ - start) / 1000, digits=3), "µs")
