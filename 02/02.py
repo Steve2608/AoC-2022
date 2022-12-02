@@ -17,16 +17,16 @@ def part1(data: list[list[str]]) -> int:
 def part2(data: list[list[str]]) -> int:
     score = 0
     for opp, you in data:
-        if you == 'X':
+        if you == 'X': # win
             if opp == 'A':
                 score += 3
             elif opp == 'B':
                 score += 1
             else:
                 score += 2
-        elif you == 'Y':
+        elif you == 'Y': # draw
             score += 3 + (ord(opp) - ord('A') + 1)
-        else:
+        else: # loss
             score += 6
             if opp == 'A':
                 score += 2
