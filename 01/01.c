@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define LINE_LEN 100
 #define N_ELVES 3
@@ -85,7 +86,15 @@ struct solution* solve(const char* file_name) {
     return sol;
 }
 
+unsigned long timestamp_nano() {
+    struct timespec time;
+    timespec_get(&time, TIME_UTC);
+    return time.tv_nsec;
+}
+
 int main() {
+    unsigned long start = timestamp_nano();
+
     struct solution* sol = solve("01/input.txt");
     if (sol == NULL) exit(EXIT_FAILURE);
 
@@ -93,6 +102,9 @@ int main() {
     printf("part2: %d\n", sol->p2);
 
     free(sol);
+
+    unsigned long end = timestamp_nano();
+    printf("time: %.3fµs\n", (end - start) / 1000.0);
 
     exit(EXIT_SUCCESS);
 }

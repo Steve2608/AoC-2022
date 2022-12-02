@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define N_GAMES 2500
 
@@ -78,7 +79,15 @@ int part2(char* data, size_t n_games) {
     return score;
 }
 
+unsigned long timestamp_nano() {
+    struct timespec time;
+    timespec_get(&time, TIME_UTC);
+    return time.tv_nsec;
+}
+
 int main() {
+    unsigned long start = timestamp_nano();
+
     char* data = read_data("02/input.txt", N_GAMES);
     if (data == NULL) exit(EXIT_FAILURE);
 
@@ -89,6 +98,9 @@ int main() {
     printf("part2: %d\n", p2);
 
     free(data);
+    
+    unsigned long end = timestamp_nano();
+    printf("time: %.3fµs\n", (end - start) / 1000.0);
 
     exit(EXIT_SUCCESS);
 }
