@@ -4,8 +4,10 @@
 #include <time.h>
 
 #define N_GAMES 2500
+// <c>_<c>\n\0
+#define LINE_LEN 5
 
-char* read_data(const char* file_name, size_t n_games) {
+char* read_data(const char* file_name, size_t n_games, size_t line_len) {
     FILE* fp = fopen(file_name, "r");
     if (fp == NULL) {
         perror(file_name);
@@ -18,13 +20,21 @@ char* read_data(const char* file_name, size_t n_games) {
         return NULL;
     }
 
+    char* buf = malloc(sizeof(char) * line_len);
+    if (buf == NULL) {
+        fclose(fp);
+        free(games);
+        return NULL;
+    }
+
     int i = 0;
-    char opp, you;
-    while (fscanf(fp, "%c %c\n", &opp, &you) > 0) {
-        games[i++] = opp;
-        games[i++] = you;
+    while (fgets(buf, line_len, fp) != NULL) {
+        games[i++] = buf[0];
+        games[i++] = buf[2];
     }
     fclose(fp);
+    free(buf);
+
     return games;
 }
 
@@ -88,7 +98,7 @@ unsigned long timestamp_nano() {
 int main() {
     unsigned long start = timestamp_nano();
 
-    char* data = read_data("02/input.txt", N_GAMES);
+    char* data = read_data("02/input.txt", N_GAMES, LINE_LEN);
     if (data == NULL) exit(EXIT_FAILURE);
 
     int p1 = part1(data, N_GAMES);
@@ -98,7 +108,7 @@ int main() {
     printf("part2: %d\n", p2);
 
     free(data);
-    
+
     unsigned long end = timestamp_nano();
     printf("time: %.1fµs\n", (end - start) / 1000.0);
 
