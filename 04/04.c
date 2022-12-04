@@ -17,11 +17,12 @@ struct solution* solve(const char* file_name, size_t n_pairs) {
         return NULL;
     }
 
-    int start1, end1, start2, end2;
-    int part1 = 0, part2 = 0; 
+    // values range from 0-99
+    short start1, end1, start2, end2;
+    int part1 = 0, part2 = 0;
     for (int i = 0; i < n_pairs; i++) {
         // matching one line exactly
-        if (fscanf(fp, "%d-%d,%d-%d\n", &start1, &end1, &start2, &end2) != 4) {
+        if (fscanf(fp, "%hi-%hi,%hi-%hi\n", &start1, &end1, &start2, &end2) != 4) {
             perror("Invalid line encountered");
             fclose(fp);
             return NULL;
@@ -56,14 +57,14 @@ unsigned long timestamp_nano() {
 int main() {
     unsigned long start = timestamp_nano();
 
-    struct solution* sol = solve("04/input.txt", N_PAIRS); 
+    struct solution* sol = solve("04/input.txt", N_PAIRS);
     if (sol == NULL) exit(EXIT_FAILURE);
 
     printf("part1: %d\n", sol->p1);
     printf("part2: %d\n", sol->p2);
 
     free(sol);
-    
+
     unsigned long end = timestamp_nano();
     printf("time: %.1fµs\n", (end - start) / 1000.0);
 
