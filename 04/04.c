@@ -30,7 +30,6 @@ struct solution* solve(const char* file_name, size_t n_pairs) {
 
         if ((start1 <= start2 && end2 <= end1) || (start2 <= start1 && end1 <= end2)) part1++;
         if ((start1 <= start2 && start2 <= end1) || (start2 <= start1 && start1 <= end2)) part2++;
-
     }
     fclose(fp);
 
