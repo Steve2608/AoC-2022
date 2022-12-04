@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::fs;
 use std::time::Instant;
 
@@ -44,16 +43,12 @@ fn part1(rucksacks: &Vec<&str>) -> i32 {
 fn part2(rucksacks: &Vec<&str>) -> i32 {
     let mut score: i32 = 0;
     for lines in rucksacks.chunks(3) {
-        let mut set: HashSet<char> = lines[0].chars().collect();
-        let mut other: HashSet<char> = lines[1].chars().collect();
-
-        set = set.intersection(&other).cloned().collect();
-        other = lines[2].chars().collect();
-
-        set = set.intersection(&other).cloned().collect();
-
-        let c: char = *set.iter().next().unwrap();
-        score += char_to_score(c as u8) as i32;
+        'outer: for c in lines[0].chars() {
+            if lines[1].contains(c) && lines[2].contains(c) {
+                score += char_to_score(c as u8) as i32;
+                break 'outer;
+            }
+        }
     }
 
     return score;
