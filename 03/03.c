@@ -56,7 +56,7 @@ int index_of(char needle, char* haystack, int size) {
 int part2(char** items, int* sizes, size_t group_size) {
     for (int i = 0; i < sizes[0]; i++) {
         char needle = items[0][i];
-        
+
         int found = 1;
         for (int j = 1; j < group_size; j++) {
             if (index_of(needle, items[j], sizes[j]) < 0) {
@@ -131,14 +131,14 @@ unsigned long timestamp_nano() {
 int main() {
     unsigned long start = timestamp_nano();
 
-    struct solution* sol = solve("03/input.txt", N_GROUPS, N_ELVES_PER_GROUP, ITEM_LENGTH); 
+    struct solution* sol = solve("03/input.txt", N_GROUPS, N_ELVES_PER_GROUP, ITEM_LENGTH);
     if (sol == NULL) exit(EXIT_FAILURE);
 
     printf("part1: %d\n", sol->p1);
     printf("part2: %d\n", sol->p2);
 
     free(sol);
-    
+
     unsigned long end = timestamp_nano();
     printf("time: %.1fµs\n", (end - start) / 1000.0);
 
