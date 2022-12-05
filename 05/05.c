@@ -156,8 +156,7 @@ struct cargo* parse(const char* file_name, size_t n_stacks, size_t max_height, s
 
             if (crate != ' ') {
                 // set crate
-                cargo->crates[j * cargo->max_height + cargo->heights[j]] = crate;
-                cargo->heights[j]++;
+                cargo->crates[j * cargo->max_height + cargo->heights[j]++] = crate;
             }
         }
     }
@@ -201,13 +200,11 @@ char* part1(struct cargo* orig) {
 
         for (int j = 0; j < cnt; j++) {
             // get crate
-            copy->heights[src]--;
-            char crate = copy->crates[src * copy->max_height + copy->heights[src]];
+            char crate = copy->crates[src * copy->max_height + --copy->heights[src]];
             copy->crates[src * copy->max_height + copy->heights[src]] = '\0';
 
             // set crate
-            copy->crates[dst * copy->max_height + copy->heights[dst]] = crate;
-            copy->heights[dst]++;
+            copy->crates[dst * copy->max_height + copy->heights[dst]++] = crate;
         }
     }
     for (int i = 0; i < copy->n_stacks; i++) {
