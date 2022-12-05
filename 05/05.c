@@ -17,10 +17,10 @@ struct cargo {
     byte* heights;
     byte* instructions;
 
-    int n_stacks;
-    int max_height;
-    int n_instructions;
-    int n_operands_instruction;
+    byte n_stacks;
+    byte max_height;
+    short n_instructions;
+    byte n_operands_instruction;
 };
 
 void free_cargo(struct cargo* cargo) {
