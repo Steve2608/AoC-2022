@@ -1,7 +1,7 @@
 use std::fs;
 use std::time::Instant;
 
-static N_CRATES: usize = 9;
+static N_STACKS: usize = 9;
 static N_INSTR_PARTS: usize = 3;
 
 fn main() {
@@ -22,12 +22,12 @@ fn parse_input() -> (Vec<String>, Vec<i8>) {
     let initial: &str = parts[0];
     let instr: &str = parts[1];
 
-    let mut data: Vec<String> = vec![String::new(); N_CRATES];
+    let mut data: Vec<String> = vec![String::new(); N_STACKS];
     let mut lines: Vec<&str> = initial.split("\n").collect();
     // remove numbered line
     lines.pop();
     for line in lines {
-        for i in 0..N_CRATES {
+        for i in 0..N_STACKS {
             let c: char = line.as_bytes()[1 + i * 4] as char;
             if c != ' ' {
                 data[i] = format!("{}{}", c, data[i]);
@@ -71,7 +71,7 @@ fn part1(data: &Vec<String>, instructions: &Vec<i8>) -> String {
 fn part2(data: &Vec<String>, instructions: &Vec<i8>) -> String {
     let mut containers = data.to_vec();
 
-    for instr in instructions.chunks(3) {
+    for instr in instructions.chunks(N_INSTR_PARTS) {
         let cnt = instr[0] as usize;
         let src = (instr[1] - 1) as usize;
         let dst = (instr[2] - 1) as usize;

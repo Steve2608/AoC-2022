@@ -30,13 +30,13 @@ if __name__ == '__main__':
     with open('05/input.txt') as in_file:
         content = in_file.read()
 
-        N_CRATES = 9
+        N_STACKS = 9
         initial, instructions = content.split('\n\n')
-        data = ['' for _ in range(N_CRATES)]
+        data = ['' for _ in range(N_STACKS)]
         # remove numbered line
         initial = initial.split('\n')[:-1]
         for line in initial[::-1]:
-            for i in range(N_CRATES):
+            for i in range(N_STACKS):
                 if (char := line[1 + i*4]) != ' ':
                     data[i] += char
 

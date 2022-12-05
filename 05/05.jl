@@ -29,13 +29,13 @@ start = timestamp_nano()
 data, instructions = open("05/input.txt") do in_file
     content = read(in_file, String)
 
-    N_CRATES = 9
+    N_STACKS = 9
     initial, instructions = split(content, "\n\n")
-    data = ["" for _ in 1:N_CRATES]
+    data = ["" for _ in 1:N_STACKS]
     # remove numbered line
     initial = split(initial, "\n")[1:end-1]
     for line in reverse(initial)
-        for i in 1:N_CRATES
+        for i in 1:N_STACKS
             c = line[i*4 - 2]
             if c != ' '
                 # string concat
