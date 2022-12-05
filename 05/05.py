@@ -46,4 +46,4 @@ if __name__ == '__main__':
     print(f'part2: {part2(data, instructions)}')
 
     end = timestamp_nano()
-    print(f'{(end - start) / 1000:.3f}µs')
+    print(f'time: {(end - start) / 1000:.3f}µs')
