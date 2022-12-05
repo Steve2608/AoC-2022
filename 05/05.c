@@ -3,12 +3,12 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_HEIGHT (N_STACKS * N_HEADER_LINES)
 #define N_STACKS 9
 #define N_INSTRUCTIONS 501
 #define N_OPERANDS_INSTRUCTION 3
 #define N_HEADER_LINES 9
-#define N_BYTES_HEADER_LINE 36
+#define N_BYTES_HEADER_LINE (N_STACKS * 4)
+#define MAX_HEIGHT (N_STACKS * N_HEADER_LINES)
 
 typedef signed char byte;
 
