@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h>
 
-#define MAX_HEIGHT (N_STACKS * (N_HEADER_LINES - 1))
+#define MAX_HEIGHT (N_STACKS * N_HEADER_LINES)
 #define N_STACKS 9
 #define N_INSTRUCTIONS 501
 #define N_OPERANDS_INSTRUCTION 3
