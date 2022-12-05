@@ -23,12 +23,12 @@ struct cargo {
     int n_operands_instruction;
 };
 
-void free_cargo(struct cargo* c) {
-    if (c == NULL) return;
-    free(c->instructions);
-    free(c->heights);
-    free(c->crates);
-    free(c);
+void free_cargo(struct cargo* cargo) {
+    if (cargo == NULL) return;
+    free(cargo->instructions);
+    free(cargo->heights);
+    free(cargo->crates);
+    free(cargo);
 }
 
 struct cargo* copy_cargo(struct cargo* orig) {
@@ -67,52 +67,52 @@ struct cargo* copy_cargo(struct cargo* orig) {
     return copy;
 }
 
-void print_cargo(struct cargo* c) {
-    if (c == NULL) return;
+void print_cargo(struct cargo* cargo) {
+    if (cargo == NULL) return;
 
-    char* stack = malloc(sizeof(char) * (c->max_height + 1));
+    char* stack = malloc(sizeof(char) * (cargo->max_height + 1));
     if (stack == NULL) return;
 
-    for (int i = 0; i < c->n_stacks; i++) {
+    for (int i = 0; i < cargo->n_stacks; i++) {
         int j;
-        for (j = 0; j < c->heights[i]; j++) {
-            stack[j] = c->crates[i * c->max_height + j];
+        for (j = 0; j < cargo->heights[i]; j++) {
+            stack[j] = cargo->crates[i * cargo->max_height + j];
         }
         stack[j] = '\0';
-        printf("%d [%hhd]: %s\n", i, c->heights[i], stack);
+        printf("%d [%hhd]: %s\n", i, cargo->heights[i], stack);
     }
     printf("\n");
     free(stack);
 }
 
 struct cargo* init_cargo(size_t n_stacks, size_t max_height, size_t n_instructions, size_t n_operands_instruction) {
-    struct cargo* c = malloc(sizeof(struct cargo));
-    if (c == NULL) return NULL;
-    c->n_stacks = n_stacks;
-    c->max_height = max_height;
-    c->n_instructions = n_instructions;
-    c->n_operands_instruction = n_operands_instruction;
+    struct cargo* cargo = malloc(sizeof(struct cargo));
+    if (cargo == NULL) return NULL;
+    cargo->n_stacks = n_stacks;
+    cargo->max_height = max_height;
+    cargo->n_instructions = n_instructions;
+    cargo->n_operands_instruction = n_operands_instruction;
 
     // big 1D array
-    c->crates = malloc(sizeof(char) * (n_stacks * max_height));
-    if (c->crates == NULL) {
-        free_cargo(c);
+    cargo->crates = malloc(sizeof(char) * (n_stacks * max_height));
+    if (cargo->crates == NULL) {
+        free_cargo(cargo);
         return NULL;
     }
 
-    c->heights = calloc(n_stacks, sizeof(byte));
-    if (c->heights == NULL) {
-        free_cargo(c);
+    cargo->heights = calloc(n_stacks, sizeof(byte));
+    if (cargo->heights == NULL) {
+        free_cargo(cargo);
         return NULL;
     }
 
-    c->instructions = malloc(sizeof(byte) * (n_instructions * n_operands_instruction));
-    if (c->instructions == NULL) {
-        free_cargo(c);
+    cargo->instructions = malloc(sizeof(byte) * (n_instructions * n_operands_instruction));
+    if (cargo->instructions == NULL) {
+        free_cargo(cargo);
         return NULL;
     }
 
-    return c;
+    return cargo;
 }
 
 struct cargo* parse(const char* file_name, size_t n_stacks, size_t max_height, size_t n_instructions,
@@ -123,8 +123,8 @@ struct cargo* parse(const char* file_name, size_t n_stacks, size_t max_height, s
         return NULL;
     }
 
-    struct cargo* c = init_cargo(n_stacks, max_height, n_instructions, n_operands_instruction);
-    if (c == NULL) {
+    struct cargo* cargo = init_cargo(n_stacks, max_height, n_instructions, n_operands_instruction);
+    if (cargo == NULL) {
         fclose(fp);
         return NULL;
     }
@@ -135,7 +135,7 @@ struct cargo* parse(const char* file_name, size_t n_stacks, size_t max_height, s
     int buf_size = ((n_header_lines * n_bytes_header_line) + 1 + 1);
     char* buf = malloc(sizeof(char) * buf_size);
     if (buf == NULL) {
-        free_cargo(c);
+        free_cargo(cargo);
         fclose(fp);
         return NULL;
     }
@@ -143,7 +143,7 @@ struct cargo* parse(const char* file_name, size_t n_stacks, size_t max_height, s
     // read buf_size - 1 bytes -> space for '\0'
     if (fread(buf, sizeof(char), buf_size - 1, fp) != buf_size - 1) {
         perror("Invalid header");
-        free_cargo(c);
+        free_cargo(cargo);
         fclose(fp);
         return NULL;
     }
@@ -156,8 +156,8 @@ struct cargo* parse(const char* file_name, size_t n_stacks, size_t max_height, s
 
             if (crate != ' ') {
                 // set crate
-                c->crates[j * c->max_height + c->heights[j]] = crate;
-                c->heights[j]++;
+                cargo->crates[j * cargo->max_height + cargo->heights[j]] = crate;
+                cargo->heights[j]++;
             }
         }
     }
@@ -165,21 +165,21 @@ struct cargo* parse(const char* file_name, size_t n_stacks, size_t max_height, s
     free(buf);
 
     byte cnt, src, dst;
-    for (int i = 0, offset = 0; i < n_instructions; i++, offset += c->n_operands_instruction) {
-        if (fscanf(fp, "move %hhd from %hhd to %hhd\n", &cnt, &src, &dst) != c->n_operands_instruction) {
+    for (int i = 0, offset = 0; i < n_instructions; i++, offset += cargo->n_operands_instruction) {
+        if (fscanf(fp, "move %hhd from %hhd to %hhd\n", &cnt, &src, &dst) != cargo->n_operands_instruction) {
             perror("Invalid instruction encountered");
-            free_cargo(c);
+            free_cargo(cargo);
             fclose(fp);
             return NULL;
         }
-        c->instructions[offset] = cnt;
+        cargo->instructions[offset] = cnt;
         // correct for index=0 offset
-        c->instructions[offset + 1] = src - 1;
-        c->instructions[offset + 2] = dst - 1;
+        cargo->instructions[offset + 1] = src - 1;
+        cargo->instructions[offset + 2] = dst - 1;
     }
     fclose(fp);
 
-    return c;
+    return cargo;
 }
 
 char* part1(struct cargo* orig) {
@@ -257,27 +257,27 @@ unsigned long timestamp_nano() {
 int main() {
     unsigned long start = timestamp_nano();
 
-    struct cargo* c = parse("05/input.txt", N_STACKS, MAX_HEIGHT, N_INSTRUCTIONS, N_OPERANDS_INSTRUCTION,
+    struct cargo* cargo = parse("05/input.txt", N_STACKS, MAX_HEIGHT, N_INSTRUCTIONS, N_OPERANDS_INSTRUCTION,
                             N_HEADER_LINES, N_BYTES_HEADER_LINE);
-    if (c == NULL) exit(EXIT_FAILURE);
+    if (cargo == NULL) exit(EXIT_FAILURE);
 
-    char* p1 = part1(c);
+    char* p1 = part1(cargo);
     if (p1 == NULL) {
-        free_cargo(c);
+        free_cargo(cargo);
         exit(EXIT_FAILURE);
     }
     printf("part1: %s\n", p1);
     free(p1);
 
-    char* p2 = part2(c);
+    char* p2 = part2(cargo);
     if (p2 == NULL) {
-        free_cargo(c);
+        free_cargo(cargo);
         exit(EXIT_FAILURE);
     }
     printf("part2: %s\n", p2);
     free(p2);
 
-    free_cargo(c);
+    free_cargo(cargo);
 
     unsigned long end = timestamp_nano();
     printf("time: %.1fµs\n", (end - start) / 1000.0);
