@@ -26,9 +26,12 @@ char* read_data(const char* file_name, size_t file_size) {
 }
 
 int solve(char* data, size_t data_len, size_t n_distinct) {
-    for (int i = n_distinct; i < data_len; i++) {
-        for (int j = i - n_distinct; j < i; j++) {
-            for (int k = i - n_distinct; k < i; k++) {
+    int i, j, k;
+    for (i = n_distinct; i < data_len;) {
+        int start = i - n_distinct;
+
+        for (j = start; j < i; j++) {
+            for (k = i - 1; k >= start; k--) {
                 if (j != k && data[j] == data[k]) {
                     goto not_header;
                 }
@@ -37,8 +40,11 @@ int solve(char* data, size_t data_len, size_t n_distinct) {
         // no duplicate in last n_distinct characeters
         return i;
 
-        not_header:
+    not_header:
         // duplicate found, just continue
+
+        // shift sliding window past current duplicate
+        i += abs(j - k);
     }
     return -1;
 }
