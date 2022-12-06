@@ -25,8 +25,8 @@ char* read_data(const char* file_name, size_t file_size) {
     return data;
 }
 
-int solve(char* data, size_t data_len, size_t n_distinct) {
-    for (int i = n_distinct; i < data_len;) {
+int solve(char* data, size_t data_len, size_t n_distinct, int offset) {
+    for (int i = offset + n_distinct; i < data_len;) {
         int j, k, start = i - n_distinct;
 
         for (j = start; j < i; j++) {
@@ -59,10 +59,10 @@ int main() {
 
     char* data = read_data("06/input.txt", FILE_SIZE);
 
-    int p1 = solve(data, FILE_SIZE - 1, 4);
+    int p1 = solve(data, FILE_SIZE - 1, 4, 0);
     printf("part1: %d\n", p1);
 
-    int p2 = solve(data, FILE_SIZE - 1, 14);
+    int p2 = solve(data, FILE_SIZE - 1, 14, p1 - 4);
     printf("part2: %d\n", p2);
 
     free(data);
