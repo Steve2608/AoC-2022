@@ -6,15 +6,16 @@ fn main() {
 
     let data: String = fs::read_to_string("06/input.txt").expect("File not found");
 
-    println!("part1: {}", solve(&data, 4));    
-    println!("part1: {}", solve(&data, 14));    
+    let p1 = solve(&data, 4, 0);
+    println!("part1: {}", p1);    
+    println!("part1: {}", solve(&data, 14, (p1 - 4) as usize));    
 
     println!("time: {:?}", start.elapsed());
 }
 
-fn solve(data: &String, n_distinct: usize) -> i32 {
+fn solve(data: &String, n_distinct: usize, offset: usize) -> i32 {
     let bytes = data.as_bytes();
-    'outer: for i in n_distinct..bytes.len() {
+    'outer: for i in (offset + n_distinct)..bytes.len() {
         // for-loop go brrrrr
         for j in i - n_distinct..i {
             for k in i - n_distinct..i {
