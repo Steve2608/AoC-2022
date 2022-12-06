@@ -26,9 +26,8 @@ char* read_data(const char* file_name, size_t file_size) {
 }
 
 int solve(char* data, size_t data_len, size_t n_distinct) {
-    int i, j, k;
-    for (i = n_distinct; i < data_len;) {
-        int start = i - n_distinct;
+    for (int i = n_distinct; i < data_len;) {
+        int j, k, start = i - n_distinct;
 
         for (j = start; j < i; j++) {
             for (k = i - 1; k >= start; k--) {
