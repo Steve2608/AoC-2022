@@ -87,15 +87,17 @@ def part1(root: Dir, max_size: int) -> int:
 
 
 def part2(root: Dir, disk_space_total: int, free_space_min: int) -> int:
-    to_free = free_space_min - (disk_space_total - root.size)
-
-    def gen_sizes(cwd: Dir | File):
+    def find_min(cwd: Dir | File):
+        nonlocal optim
         if cwd.is_dir:
-            yield cwd.size
+            if to_free <= cwd.size < optim:
+                optim = cwd.size
             for child in cwd:
-                yield from gen_sizes(child)
+                find_min(child)
+        return optim
 
-    return min(filter(lambda s: s >= to_free, gen_sizes(root)))
+    to_free = free_space_min - (disk_space_total - (optim := root.size))
+    return find_min(root)
 
 
 if __name__ == '__main__':
