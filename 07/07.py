@@ -1,102 +1,109 @@
+from __future__ import annotations
+
 import dataclasses
-from time import perf_counter_ns as timestamp_nano
 from functools import cached_property
+from time import perf_counter_ns as timestamp_nano
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(slots=True, repr=False, eq=False)
 class AbstractFile:
     name: str
-    parent: 'Dir'
+    parent: Dir
+
+    @property
+    def is_dir(self) -> bool:
+        return False
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(slots=True, repr=False, eq=False)
 class File(AbstractFile):
     size: int
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(repr=False, eq=False)
 class Dir(AbstractFile):
-    children: list = dataclasses.field(default_factory=list)
+    children: dict[str, Dir | File] = dataclasses.field(default_factory=dict)
 
+    # our file-system will not change, so we can cache sizes
     @cached_property
     def size(self) -> int:
         return sum(child.size for child in self)
 
-    def __iter__(self):
-        return iter(self.children)
+    @property
+    def is_dir(self) -> bool:
+        return True
+
+    def __iter__(self) -> iter[AbstractFile]:
+        return iter(self.children.values())
 
 
-def file_system(data: str) -> Dir:
+def file_system(path: str) -> Dir:
     root = Dir('/', None)
     cwd = root
 
-    lines = data.splitlines()
-    n_lines = len(lines)
-    # first line is '$ cd /' so skip that
-    i = 1
-    while i < n_lines:
-        match lines[i].split(' '):
-            case ['$', 'cd', target]:
-                if target == '/':
-                    cwd = root
-                elif target == '..':
-                    cwd = cwd.parent
-                else:
-                    for child in cwd:
-                        if child.name == target:
-                            cwd = child
-                            # we only cd to known dirs
-                            break
-                i += 1
-            case ['$', 'ls']:
-                i += 1
-                while i < n_lines and not lines[i].startswith('$ '):
-                    match lines[i].split(' '):
-                        case ['dir', name]:
-                            cwd.children.append(Dir(name, cwd))
-                        case [size, name]:
-                            cwd.children.append(File(name, cwd, int(size)))
-                    i += 1
-    
-    return root
+    with open(path) as in_file:
+        try:
+            # first line is '$ cd /' so skip that
+            next(in_file)
+            lines = (line.removesuffix('\n') for line in in_file)
+
+            line = next(lines)
+            # read until EOF
+            while True:
+                match line.split(' '):
+                    case ['$', 'cd', '/']:
+                        cwd = root
+                        line = next(lines)
+                    case ['$', 'cd', '..']:
+                        cwd = cwd.parent
+                        line = next(lines)
+                    case ['$', 'cd', target]:
+                        # assumption: We're only cd-ing to known targets
+                        cwd = cwd.children[target]
+                        line = next(lines)
+                    case ['$', 'ls']:
+                        # read until there's a new command or EOF
+                        while (line := next(lines)):
+                            match line.split(' '):
+                                case ['dir', name]:
+                                    cwd.children[name] = Dir(name, cwd)
+                                case [size, name]:
+                                    cwd.children[name] = File(name, cwd, int(size))
+                                case ['$', *_]:
+                                    break
+        except StopIteration:
+            return root
 
 
 def part1(root: Dir, max_size: int) -> int:
     def rec_size(cwd):
-        if isinstance(cwd, Dir):
-            size = 0
+        if cwd.is_dir:
             if (s := cwd.size) <= max_size:
-                size += s
+                yield s
             for child in cwd:
-                size += rec_size(child)
+                yield from rec_size(child)
 
-            return size
-        return 0
-
-    return rec_size(root)
+    return sum(rec_size(root))
 
 
-def part2(root: Dir, disk_space_total: int, disk_space_min: int) -> int:
-    to_free = disk_space_min - (disk_space_total - root.size)
+def part2(root: Dir, disk_space_total: int, free_space_min: int) -> int:
+    to_free = free_space_min - (disk_space_total - root.size)
 
     def gen_sizes(cwd: Dir | File):
-        if isinstance(cwd, Dir):
+        if cwd.is_dir:
             yield cwd.size
             for child in cwd:
                 yield from gen_sizes(child)
 
-    return min(s for s in gen_sizes(root) if s >= to_free)
+    return min(filter(lambda s: s >= to_free, gen_sizes(root)))
 
 
 if __name__ == '__main__':
     start = timestamp_nano()
 
-    with open('07/input.txt') as in_file:
-        data = in_file.read()
-
-    tree = file_system(data)
-    print(f'part1: {part1(tree, int(100e3))}')
-    print(f'part2: {part2(tree, int(70e6), int(30e6))}')
+    tree = file_system('07/input.txt')
+    print(f'part1: {part1(tree, max_size=int(100e3))}')
+    print(f'part2: {part2(tree, disk_space_total=int(70e6), free_space_min=int(30e6))}')
 
     end = timestamp_nano()
     print(f'time: {(end - start) / 1000:.3f}µs')
