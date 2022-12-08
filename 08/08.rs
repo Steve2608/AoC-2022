@@ -26,7 +26,7 @@ fn part1(grid: &Vec<Vec<i8>>) -> usize {
         for y in 1..&row.len() - 1 {
             let tree = &row[y];
 
-            if !row[y+1..row.len()].iter().any(|val| tree <= val) || !row[0..y].iter().any(|val| tree <= val) {
+            if row[y+1..row.len()].iter().all(|val| tree > val) || row[0..y].iter().all(|val| tree > val) {
                 i += 1;
             } else {
                 // construction of col-vec is expensive, so we check for rows only first
@@ -34,7 +34,7 @@ fn part1(grid: &Vec<Vec<i8>>) -> usize {
                     .map(|s| &s[y])
                     .collect::<Vec<_>>();
 
-                if !col[x+1..col.len()].iter().any(|val| tree <= val) || !col[0..x].iter().any(|val| tree <= val) {
+                if col[x+1..col.len()].iter().all(|val| tree > val) || col[0..x].iter().all(|val| tree > val) {
                     i += 1
                 }
             }
