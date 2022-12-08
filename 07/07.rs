@@ -42,11 +42,13 @@ fn file_system(path: &str) -> HashMap<String, usize> {
                 let num = parts[0].parse::<usize>();
                 match num {
                     Ok(val) => {
-                        let mut dir = "".to_string();
+                        let mut dir = "/".to_string();
+                        *sizes.entry(dir.to_string()).or_insert(0) += val;
 
                         // update size in cwd and all parents
-                        for part in cwd.iter() {
+                        for part in cwd.iter().skip(1) {
                             dir.push_str(part);
+                            dir.push_str("/");
                             *sizes.entry(dir.to_string()).or_insert(0) += val;
                         }
                     },
