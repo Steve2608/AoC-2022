@@ -30,14 +30,16 @@ part2(data)::Int = sum(
     ) for (opp, _, you) in data
 )
 
-start = timestamp_nano()
-
-data = open("02/input.txt") do in_file
+get_data() = open("02/input.txt") do in_file
     split(read(in_file, String), "\n")
 end
+
+start = timestamp_nano()
+
+data = get_data()
 
 println("part1: ", part1(data))
 println("part2: ", part2(data))
 
 end_ = timestamp_nano()
-println("time: ", round((end_ - start) / 1000, digits=3), "µs")
+println("time: ", round((end_ - start) / 1e6, digits=3), "ms")

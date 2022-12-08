@@ -24,9 +24,7 @@ function part2(data, instructions)::String
     return join((cont[end] for cont in containers), "")
 end
 
-start = timestamp_nano()
-
-data, instructions = open("05/input.txt") do in_file
+get_data() = open("05/input.txt") do in_file
     content = read(in_file, String)
 
     N_STACKS = 9
@@ -52,8 +50,12 @@ data, instructions = open("05/input.txt") do in_file
     data, instructions
 end
 
+start = timestamp_nano()
+
+data, instructions = get_data()
+
 println("part1: ", part1(data, instructions))
 println("part2: ", part2(data, instructions))
 
 end_ = timestamp_nano()
-println("time: ", round((end_ - start) / 1000, digits=3), "µs")
+println("time: ", round((end_ - start) / 1e6, digits=3), "ms")

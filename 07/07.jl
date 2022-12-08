@@ -86,15 +86,17 @@ function part2(root, disk_space_total, free_space_min)::Int
     return find_min(root)
 end
 
-start = timestamp_nano()
-
-lines = open("07/input.txt") do in_file
+get_data() = open("07/input.txt") do in_file
     split(read(in_file, String), "\n")
 end
+
+start = timestamp_nano()
+
+lines = get_data()
 
 root = file_system(lines)
 println("part1: ", part1(root, Int(100e3)))
 println("part2: ", part2(root, Int(70e6), Int(30e6)))
 
 end_ = timestamp_nano()
-println("time: ", round((end_ - start) / 1000, digits=3), "µs")
+println("time: ", round((end_ - start) / 1e6, digits=3), "ms")

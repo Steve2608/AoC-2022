@@ -10,15 +10,16 @@ function solve(data, n_distinct, offset = 0)::Int
     return -1
 end
 
-start = timestamp_nano()
-
-data = open("06/input.txt") do in_file
+get_data() = open("06/input.txt") do in_file
     read(in_file, String)
 end
 
+start = timestamp_nano()
+
+data = get_data()
 p1 = solve(data, 4)
 println("part1: ", p1)
 println("part2: ", solve(data, 14, p1 - 4))
 
 end_ = timestamp_nano()
-println("time: ", round((end_ - start) / 1000, digits=3), "µs")
+println("time: ", round((end_ - start) / 1e6, digits=3), "ms")
