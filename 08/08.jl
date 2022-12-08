@@ -21,13 +21,6 @@ function part2(grid)::Int
     for x in 2:(w - 1)
         for y in 2:(h - 1)
             tree = grid[x, y]
-
-            score_down = 1
-            i, j = x, y
-            while i < w - 1 && tree > grid[i + 1, j]
-                score_down += 1
-                i += 1
-            end
                    
             score_up = 1
             i, j = x, y
@@ -42,6 +35,13 @@ function part2(grid)::Int
                 score_left += 1
                 j -= 1
             end
+
+            score_down = 1
+            i, j = x, y
+            while i < w - 1 && tree > grid[i + 1, j]
+                score_down += 1
+                i += 1
+            end
                    
             score_right = 1
             i, j = x, y
@@ -50,7 +50,7 @@ function part2(grid)::Int
                 j += 1
             end
 
-            best_scenic_score = max(score_right * score_left * score_up * score_down, best_scenic_score)
+            best_scenic_score = max(score_up * score_left * score_down * score_right, best_scenic_score)
         end
     end
     return best_scenic_score
