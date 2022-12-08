@@ -69,4 +69,4 @@ println("part1: ", part1(grid))
 println("part2: ", part2(grid))
 
 end_ = timestamp_nano()
-println("time: ", round((end_ - start) / 1000, digits=3), "µs")
+println("time: ", round((end_ - start) / 1e6, digits=3), "ms")
