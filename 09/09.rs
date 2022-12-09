@@ -6,17 +6,18 @@ fn main() {
     let start = Instant::now();
 
     let data: String = fs::read_to_string("09/input.txt").expect("File not found");
-    let instr: Vec<(&str, usize)> = data.split("\n")
+    let instr: Vec<(&str, usize)> = data
+        .split("\n")
         .map(|line| {
             let parts: Vec<&str> = line.split(" ").collect();
 
             let direction: &str = parts[0];
             let n = parts[1].parse::<usize>().unwrap();
-            
+
             return (direction, n);
         })
         .collect();
-    
+
     println!("part1: {}", part1(&instr));
     println!("part2: {}", part2(&instr, 9));
 
@@ -33,72 +34,54 @@ fn part1(instructions: &Vec<(&str, usize)>) -> usize {
     for &(direction, amount) in instructions.iter() {
         for _ in 0..amount {
             match direction {
-                "U" => {
-                    head = (head.0, head.1 + 1);
-                },
-                "D" => {
-                    head = (head.0, head.1 - 1);
-                },
-                "L" => {
-                    head = (head.0 - 1, head.1);
-                },
-                "R" => {
-                    head = (head.0 + 1, head.1);
-                },
-                _ => {}
+                "U" => head.1 += 1,
+                "D" => head.1 -= 1,
+                "L" => head.0 -= 1,
+                "R" => head.0 += 1,
+                _ => unreachable!()
             }
-            tail = drag_tail_behind(head, tail);
+
+            // drag tail behind
+            let diff_x = head.0 - tail.0;
+            let diff_y = head.1 - tail.1;
+        
+            if diff_x.abs() > 1 || diff_y.abs() > 1 {
+                tail.0 += diff_x.signum();
+                tail.1 += diff_y.signum();
+            }
             visited.insert(tail);
         }
     }
     return visited.len();
 }
 
-fn drag_tail_behind(head: (i16, i16), tail: (i16, i16)) -> (i16, i16) {
-    let diff_x = head.0 - tail.0;
-    let diff_y = head.1 - tail.1;
-    
-    if diff_x.abs() <= 1 && diff_y.abs() <= 1 {
-        return tail;
-    }
-
-    return (
-        tail.0 + diff_x.signum(),
-        tail.1 + diff_y.signum()
-    );
-}
-
-
 fn part2(instructions: &Vec<(&str, usize)>, n_knots: usize) -> usize {
     let mut visited: HashSet<(i16, i16)> = HashSet::new();
 
-    let mut head: (i16, i16) = (0, 0);
-    let mut knots: Vec<(i16, i16)> = vec![(0, 0); n_knots];
-    visited.insert(knots[n_knots - 1]);
+    let mut knots: Vec<(i16, i16)> = vec![(0, 0); n_knots + 1];
+    visited.insert(knots[n_knots]);
 
     for &(direction, amount) in instructions.iter() {
         for _ in 0..amount {
             match direction {
-                "U" => {
-                    head = (head.0, head.1 + 1);
-                },
-                "D" => {
-                    head = (head.0, head.1 - 1);
-                },
-                "L" => {
-                    head = (head.0 - 1, head.1);
-                },
-                "R" => {
-                    head = (head.0 + 1, head.1);
-                },
-                _ => {}
+                "U" => knots[0].1 += 1,
+                "D" => knots[0].1 -= 1,
+                "L" => knots[0].0 -= 1,
+                "R" => knots[0].0 += 1,
+                _ => unreachable!()
             }
 
-            knots[0] = drag_tail_behind(head, knots[0]);
-            for i in 1..n_knots {
-                knots[i] = drag_tail_behind(knots[i - 1], knots[i]);
+            // drag knots behind
+            for i in 1..=n_knots {
+                let diff_x = knots[i - 1].0 - knots[i].0;
+                let diff_y = knots[i - 1].1 - knots[i].1;
+            
+                if diff_x.abs() > 1 || diff_y.abs() > 1 {
+                    knots[i].0 += diff_x.signum();
+                    knots[i].1 += diff_y.signum();
+                }
             }
-            visited.insert(knots[n_knots - 1]);
+            visited.insert(knots[n_knots]);
         }
     }
     return visited.len();
