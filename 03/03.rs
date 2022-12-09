@@ -6,7 +6,7 @@ fn main() {
 
     let data: String = fs::read_to_string("03/input.txt").expect("File not found");
 
-    let rucksacks: Vec<&str> = data.split("\n").collect();
+    let rucksacks: Vec<&str> = data.split('\n').collect();
 
     println!("part1: {}", part1(&rucksacks));
     println!("part2: {}", part2(&rucksacks));
@@ -16,13 +16,13 @@ fn main() {
 
 fn char_to_score(char: u8) -> u8 {
     if char <= b'Z' {
-        return 27 + (char - b'A');
+        27 + (char - b'A')
     } else {
-        return 1 + (char - b'a');
+        1 + (char - b'a')
     }
 }
 
-fn part1(rucksacks: &Vec<&str>) -> i32 {
+fn part1(rucksacks: &[&str]) -> i32 {
     let mut score: i32 = 0;
     for line in rucksacks {
         let len = line.len() / 2;
@@ -37,10 +37,10 @@ fn part1(rucksacks: &Vec<&str>) -> i32 {
         }
     }
 
-    return score;
+    score
 }
 
-fn part2(rucksacks: &Vec<&str>) -> i32 {
+fn part2(rucksacks: &[&str]) -> i32 {
     let mut score: i32 = 0;
     for lines in rucksacks.chunks(3) {
         'outer: for c in lines[0].chars() {
@@ -51,5 +51,5 @@ fn part2(rucksacks: &Vec<&str>) -> i32 {
         }
     }
 
-    return score;
+    score
 }

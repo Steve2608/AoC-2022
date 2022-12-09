@@ -7,7 +7,7 @@ fn main() {
     let mut calories: Vec<i32> = fs::read_to_string("01/input.txt")
         .expect("File not found")
         .split("\n\n")
-        .map(|elf| elf.split("\n").map(|num| num.parse::<i32>().unwrap()).sum())
+        .map(|elf| elf.split('\n').map(|num| num.parse::<i32>().unwrap()).sum())
         .collect();
 
     calories.sort_by(|a, b| b.cmp(a));

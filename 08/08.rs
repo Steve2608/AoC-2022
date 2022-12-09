@@ -7,7 +7,7 @@ fn main() {
 
     let data: String = fs::read_to_string("08/input.txt").expect("File not found");
     let grid: Vec<Vec<u8>> = data
-        .split("\n")
+        .split('\n')
         .map(|line| line.as_bytes().iter().map(|num| num - b'0').collect())
         .collect();
 
@@ -17,7 +17,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part1(grid: &Vec<Vec<u8>>) -> usize {
+fn part1(grid: &[Vec<u8>]) -> usize {
     // no double counting on corners
     let mut n_visible = grid.len() * 2 + grid[0].len() * 2 - 4;
 
@@ -36,17 +36,13 @@ fn part1(grid: &Vec<Vec<u8>>) -> usize {
             }
         }
     }
-    return n_visible;
+    n_visible
 }
 
-fn part2(grid: &Vec<Vec<u8>>) -> usize {
+fn part2(grid: &[Vec<u8>]) -> usize {
     let mut scenic_score = 0;
-    for x in 0..grid.len() {
-        let row = &grid[x];
-
-        for y in 0..row.len() {
-            let tree = row[y];
-
+    for (x, row) in grid.iter().enumerate() {
+        for (y, &tree) in row.iter().enumerate() {
             let mut score_up = 1;
             for i in (1..x).rev() {
                 if tree <= grid[i][y] {
@@ -82,5 +78,5 @@ fn part2(grid: &Vec<Vec<u8>>) -> usize {
             scenic_score = max(scenic_score, score_up * score_left * score_down * score_right);
         }
     }
-    return scenic_score;
+    scenic_score
 }

@@ -7,14 +7,14 @@ fn main() {
 
     let data: String = fs::read_to_string("09/input.txt").expect("File not found");
     let instr: Vec<(&str, usize)> = data
-        .split("\n")
+        .split('\n')
         .map(|line| {
-            let parts: Vec<&str> = line.split(" ").collect();
+            let parts: Vec<&str> = line.split(' ').collect();
 
             let direction: &str = parts[0];
             let n = parts[1].parse::<usize>().unwrap();
 
-            return (direction, n);
+            (direction, n)
         })
         .collect();
 
@@ -25,7 +25,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part12(instructions: &Vec<(&str, usize)>, n_knots: usize) -> (usize, usize) {
+fn part12(instructions: &[(&str, usize)], n_knots: usize) -> (usize, usize) {
     let mut visited1: HashSet<(i16, i16)> = HashSet::new();
     let mut visited2: HashSet<(i16, i16)> = HashSet::new();
 
@@ -40,7 +40,7 @@ fn part12(instructions: &Vec<(&str, usize)>, n_knots: usize) -> (usize, usize) {
                 "D" => knots[0].1 -= 1,
                 "L" => knots[0].0 -= 1,
                 "R" => knots[0].0 += 1,
-                _ => unreachable!()
+                _ => unreachable!(),
             }
 
             // drag knots behind
@@ -57,5 +57,5 @@ fn part12(instructions: &Vec<(&str, usize)>, n_knots: usize) -> (usize, usize) {
             visited2.insert(knots[n_knots]);
         }
     }
-    return (visited1.len(), visited2.len());
+    (visited1.len(), visited2.len())
 }

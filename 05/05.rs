@@ -9,8 +9,8 @@ fn main() {
 
     let (data, instructions): (Vec<String>, Vec<i8>) = parse_input();
 
-    println!("part1: {}", part1(&data, &instructions));    
-    println!("part1: {}", part2(&data, &instructions));    
+    println!("part1: {}", part1(&data, &instructions));
+    println!("part1: {}", part2(&data, &instructions));
 
     println!("time: {:?}", start.elapsed());
 }
@@ -23,7 +23,7 @@ fn parse_input() -> (Vec<String>, Vec<i8>) {
     let instr: &str = parts[1];
 
     let mut data: Vec<String> = vec![String::new(); N_STACKS];
-    let mut lines: Vec<&str> = initial.split("\n").collect();
+    let mut lines: Vec<&str> = initial.split('\n').collect();
     // remove numbered line
     lines.pop();
     for line in lines {
@@ -35,19 +35,20 @@ fn parse_input() -> (Vec<String>, Vec<i8>) {
         }
     }
 
-    let instructions: Vec<i8> = instr.split("\n")
+    let instructions: Vec<i8> = instr
+        .split('\n')
         .flat_map(|line| {
-            let parts: Vec<&str> = line.split(" ").collect();
+            let parts: Vec<&str> = line.split(' ').collect();
             // only take the numbers
-            return [parts[1], parts[3], parts[5]];
+            [parts[1], parts[3], parts[5]]
         })
         .map(|num| num.parse::<i8>().unwrap())
         .collect();
 
-    return (data, instructions);
+    (data, instructions)
 }
 
-fn part1(data: &Vec<String>, instructions: &Vec<i8>) -> String {
+fn part1(data: &[String], instructions: &[i8]) -> String {
     let mut containers = data.to_vec();
 
     for instr in instructions.chunks(N_INSTR_PARTS) {
@@ -60,15 +61,16 @@ fn part1(data: &Vec<String>, instructions: &Vec<i8>) -> String {
             containers[dst] = format!("{}{}", containers[dst], c);
         }
     }
-    
-    return containers.iter()
+
+    containers
+        .iter()
         .map(|c| c.chars().last().unwrap())
         .collect::<Vec<char>>()
         .into_iter()
-        .collect();
+        .collect()
 }
 
-fn part2(data: &Vec<String>, instructions: &Vec<i8>) -> String {
+fn part2(data: &[String], instructions: &[i8]) -> String {
     let mut containers = data.to_vec();
 
     for instr in instructions.chunks(N_INSTR_PARTS) {
@@ -83,10 +85,11 @@ fn part2(data: &Vec<String>, instructions: &Vec<i8>) -> String {
         }
         containers[dst] = format!("{}{}", containers[dst], buf.into_iter().collect::<String>());
     }
-    
-    return containers.iter()
+
+    containers
+        .iter()
         .map(|c| c.chars().last().unwrap())
         .collect::<Vec<char>>()
         .into_iter()
-        .collect();
+        .collect()
 }

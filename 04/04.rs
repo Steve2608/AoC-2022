@@ -7,10 +7,10 @@ fn main() {
     let data: String = fs::read_to_string("04/input.txt").expect("File not found");
 
     let ranges: Vec<i32> = data
-        .split("\n")
+        .split('\n')
         .flat_map(|line| {
-            line.split(",")
-                .flat_map(|tuple| tuple.split("-").map(|num| num.parse::<i32>().unwrap()))
+            line.split(',')
+                .flat_map(|tuple| tuple.split('-').map(|num| num.parse::<i32>().unwrap()))
         })
         .collect();
 
@@ -20,7 +20,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part1(ranges: &Vec<i32>) -> i32 {
+fn part1(ranges: &[i32]) -> i32 {
     let mut count = 0;
     for r in ranges.chunks(4) {
         // r[0] - r[1], r[2] - r[3]
@@ -28,10 +28,10 @@ fn part1(ranges: &Vec<i32>) -> i32 {
             count += 1;
         }
     }
-    return count;
+    count
 }
 
-fn part2(ranges: &Vec<i32>) -> i32 {
+fn part2(ranges: &[i32]) -> i32 {
     let mut count = 0;
     for r in ranges.chunks(4) {
         // r[0] - r[1], r[2] - r[3]
@@ -39,5 +39,5 @@ fn part2(ranges: &Vec<i32>) -> i32 {
             count += 1;
         }
     }
-    return count;
+    count
 }

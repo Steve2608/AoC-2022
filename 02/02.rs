@@ -6,7 +6,7 @@ fn main() {
 
     let data: String = fs::read_to_string("02/input.txt").expect("File not found");
 
-    let games: Vec<&str> = data.split("\n").collect();
+    let games: Vec<&str> = data.split('\n').collect();
 
     println!("part1: {}", part1(&games));
     println!("part2: {}", part2(&games));
@@ -14,7 +14,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part1(games: &Vec<&str>) -> i32 {
+fn part1(games: &[&str]) -> i32 {
     let diff = b'X' - b'A';
     let offset = b'W';
 
@@ -35,10 +35,10 @@ fn part1(games: &Vec<&str>) -> i32 {
         score += (you - offset) as i32;
     }
 
-    return score;
+    score
 }
 
-fn part2(games: &Vec<&str>) -> i32 {
+fn part2(games: &[&str]) -> i32 {
     let mut score: i32 = 0;
     for line in games {
         let chars = line.as_bytes();
@@ -70,5 +70,5 @@ fn part2(games: &Vec<&str>) -> i32 {
         }
     }
 
-    return score;
+    score
 }

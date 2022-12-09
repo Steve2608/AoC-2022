@@ -13,7 +13,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn solve(data: &String, n_distinct: usize, offset: usize) -> i32 {
+fn solve(data: &str, n_distinct: usize, offset: usize) -> i32 {
     let bytes = data.as_bytes();
     'outer: for i in (offset + n_distinct)..bytes.len() {
         // for-loop go brrrrr
@@ -26,5 +26,5 @@ fn solve(data: &String, n_distinct: usize, offset: usize) -> i32 {
         }
         return i as i32;
     }
-    return -1;
+    -1
 }
