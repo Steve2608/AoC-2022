@@ -51,6 +51,9 @@ fn part12(instructions: &[(&str, usize)], n_knots: usize) -> (usize, usize) {
                 if diff_x.abs() > 1 || diff_y.abs() > 1 {
                     knots[i].0 += diff_x.signum();
                     knots[i].1 += diff_y.signum();
+                } else {
+                    // "early stopping"
+                    break;
                 }
             }
             visited1.insert(knots[1]);
