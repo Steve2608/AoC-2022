@@ -6,7 +6,16 @@ fn main() {
 
     let data: String = fs::read_to_string("02/input.txt").expect("File not found");
 
-    let games: Vec<&str> = data.split('\n').collect();
+    let games: Vec<(char, char)> = data
+        .split('\n')
+        .map(|line| {
+            let mut chars = line.chars();
+            let c1: char = chars.next().unwrap();
+            let c2: char = chars.nth(1).unwrap();
+
+            (c1, c2)
+        })
+        .collect();
 
     println!("part1: {}", part1(&games));
     println!("part2: {}", part2(&games));
@@ -14,61 +23,48 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part1(games: &[&str]) -> i32 {
+fn part1(games: &[(char, char)]) -> i32 {
     let diff = b'X' - b'A';
     let offset = b'W';
 
     let mut score: i32 = 0;
-    for line in games {
-        let chars = line.as_bytes();
-        let opp = chars[0];
-        let you = chars[2];
-
-        if opp + diff == you {
+    for &(opp, you) in games {
+        if opp as u8 + diff as u8 == you as u8 {
             score += 3;
-        } else if opp == b'A' && you == b'Y'
-            || opp == b'B' && you == b'Z'
-            || opp == b'C' && you == b'X'
-        {
+        } else if opp == 'A' && you == 'Y' || opp == 'B' && you == 'Z' || opp == 'C' && you == 'X' {
             score += 6;
         }
-        score += (you - offset) as i32;
+        score += (you as u8 - offset as u8) as i32;
     }
-
     score
 }
 
-fn part2(games: &[&str]) -> i32 {
+fn part2(games: &[(char, char)]) -> i32 {
     let mut score: i32 = 0;
-    for line in games {
-        let chars = line.as_bytes();
-        let opp = chars[0];
-        let you = chars[2];
-
-        if you == b'X' {
+    for &(opp, you) in games {
+        if you == 'X' {
             // loss
-            if opp == b'A' {
+            if opp == 'A' {
                 score += 3;
-            } else if opp == b'B' {
+            } else if opp == 'B' {
                 score += 1;
             } else {
                 score += 2;
             }
-        } else if you == b'Y' {
+        } else if you == 'Y' {
             // draw
-            score += (3 + (opp - b'A' + 1)) as i32;
+            score += (3 + (opp as u8 - b'A' + 1)) as i32;
         } else {
             // win
             score += 6;
-            if opp == b'A' {
+            if opp == 'A' {
                 score += 2;
-            } else if opp == b'B' {
+            } else if opp == 'B' {
                 score += 3;
             } else {
                 score += 1;
             }
         }
     }
-
     score
 }

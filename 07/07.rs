@@ -11,8 +11,7 @@ fn main() {
     println!("part1: {}", p1);
 
     let free_size: usize = sizes["/"] - (70_000_000 - 30_000_000);
-    let p2: usize = *sizes
-        .values()
+    let p2: usize = *sizes.values()
         .filter(|size| **size >= free_size)
         .min()
         .unwrap();

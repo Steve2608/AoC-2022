@@ -6,16 +6,9 @@ fn main() {
     let start = Instant::now();
 
     let data: String = fs::read_to_string("09/input.txt").expect("File not found");
-    let instr: Vec<(&str, usize)> = data
+    let instr: Vec<(char, usize)> = data
         .split('\n')
-        .map(|line| {
-            let parts: Vec<&str> = line.split(' ').collect();
-
-            let direction: &str = parts[0];
-            let n = parts[1].parse::<usize>().unwrap();
-
-            (direction, n)
-        })
+        .map(|line| (line.chars().next().unwrap(), line[2..line.len()].parse::<usize>().unwrap()))
         .collect();
 
     let (p1, p2) = part12(&instr, 9);
@@ -25,7 +18,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part12(instructions: &[(&str, usize)], n_knots: usize) -> (usize, usize) {
+fn part12(instructions: &[(char, usize)], n_knots: usize) -> (usize, usize) {
     let mut visited1: HashSet<(i16, i16)> = HashSet::new();
     let mut visited2: HashSet<(i16, i16)> = HashSet::new();
 
@@ -36,10 +29,10 @@ fn part12(instructions: &[(&str, usize)], n_knots: usize) -> (usize, usize) {
     for &(direction, amount) in instructions.iter() {
         for _ in 0..amount {
             match direction {
-                "U" => knots[0].1 += 1,
-                "D" => knots[0].1 -= 1,
-                "L" => knots[0].0 -= 1,
-                "R" => knots[0].0 += 1,
+                'U' => knots[0].1 += 1,
+                'D' => knots[0].1 -= 1,
+                'L' => knots[0].0 -= 1,
+                'R' => knots[0].0 += 1,
                 _ => unreachable!(),
             }
 
