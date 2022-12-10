@@ -53,15 +53,15 @@ fn part2(instructions: &[&str], crt_width: usize) -> String {
 
     let mut i = 0;
     let mut sprite = 1;
-    let mut result: String = "".to_string();
+    let mut buf: String = "".to_string();
     for &instr in instructions {
-        append_buffer(i, sprite, &mut result);
+        append_buffer(i, sprite, &mut buf);
 
         if instr == "noop" {
             shift_i(&mut i, crt_width);
         } else {
             shift_i(&mut i, crt_width);
-            append_buffer(i, sprite, &mut result);
+            append_buffer(i, sprite, &mut buf);
 
             let n = instr.split(' ').last().unwrap().parse::<i32>().unwrap();
             shift_i(&mut i, crt_width);
@@ -70,7 +70,7 @@ fn part2(instructions: &[&str], crt_width: usize) -> String {
     }
     // not even mad
     for i in (crt_width..6*crt_width).step_by(crt_width).rev() {
-        result.insert(i, '\n');
+        buf.insert(i, '\n');
     }
-    result
+    buf
 }
