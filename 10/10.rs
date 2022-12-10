@@ -29,7 +29,7 @@ fn part1(instructions: &[&str]) -> i32 {
         } else {
             i += 1;
             sig_stren(i, x, &mut signal);
-            let n = instr.split(' ').last().unwrap().parse::<i32>().unwrap();
+            let n = instr[5..instr.len()].parse::<i32>().unwrap();
             i += 1;
             x += n;
         }
@@ -63,7 +63,7 @@ fn part2(instructions: &[&str], crt_width: usize) -> String {
             shift_i(&mut i, crt_width);
             append_buffer(i, sprite, &mut buf);
 
-            let n = instr.split(' ').last().unwrap().parse::<i32>().unwrap();
+            let n = instr[5..instr.len()].parse::<i32>().unwrap();
             shift_i(&mut i, crt_width);
             sprite += n;
         }
