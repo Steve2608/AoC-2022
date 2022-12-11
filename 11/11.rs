@@ -8,31 +8,22 @@ enum Operation {
     Add(usize),
 }
 
-#[derive(Debug, Clone)]
-struct Monkey {
-    items: Vec<usize>,
-    operation: Operation,
-    divisible_by: usize,
-    if_true_pass_to: usize,
-    if_false_pass_to: usize,
-}
-
 fn main() {
     let start = Instant::now();
 
     let monkeys = parse_monkeys(fs::read_to_string("11/input.txt").expect("File not found"));
 
-    let p1 = solve(monkeys.clone(), 20, 3);
+    let p1 = part1(&monkeys, 20, 3);
     println!("part1: {}", p1);
 
-    let p2 = solve(monkeys, 10_000, 0);
+    let p2 = part2(&monkeys, 10_000);
     println!("part2: {}", p2);
 
     println!("time: {:?}", start.elapsed());
 }
 
-fn parse_monkeys(data: String) -> Vec<Monkey> {
-    let monkeys: Vec<Monkey> = data
+fn parse_monkeys(data: String) -> Vec<(Vec<usize>, Operation, usize, usize, usize)> {
+    let monkeys: Vec<(Vec<usize>, Operation, usize, usize, usize)> = data
         .split("\n\n")
         .map(|chunk| {
             /*
@@ -69,119 +60,157 @@ fn parse_monkeys(data: String) -> Vec<Monkey> {
             let if_true: Vec<&str> = lines[4].split(' ').collect();
             let if_false: Vec<&str> = lines[5].split(' ').collect();
 
-            let m = Monkey {
-                items: starting_items,
-                operation: operation,
-                divisible_by: div_by[div_by.len() - 1].parse::<usize>().unwrap(),
-                if_true_pass_to: if_true[if_true.len() - 1].parse::<usize>().unwrap(),
-                if_false_pass_to: if_false[if_false.len() - 1].parse::<usize>().unwrap(),
-            };
-            m
+            (
+                starting_items,
+                operation,
+                div_by[div_by.len() - 1].parse::<usize>().unwrap(),
+                if_true[if_true.len() - 1].parse::<usize>().unwrap(),
+                if_false[if_false.len() - 1].parse::<usize>().unwrap(),
+            )
         })
         .collect();
 
     monkeys
 }
 
-fn solve(monkeys: Vec<Monkey>, rounds: usize, worry_decay: usize) -> usize {
-    let mut inspection_counts: Vec<usize> = vec![0; monkeys.len()];
-    let mut post_proc: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
-    let mut monkey_working = monkeys;
+fn part1(
+    monkeys: &[(Vec<usize>, Operation, usize, usize, usize)],
+    rounds: usize,
+    worry_decay: usize
+) -> usize {
+    fn step(
+        monkeys: &[(Vec<usize>, Operation, usize, usize, usize)],
+        src: &mut [Vec<usize>],
+        dst: &mut [Vec<usize>],
+        tmp: &mut [Vec<usize>],
+        inspec: &mut [usize],
+        worry_decay: usize
+    ) -> bool {
+        let mut has_tmp = false;
+        for (i, monkey) in src.iter().enumerate() {
+            inspec[i] += monkey.len();
 
-    let lcm: usize = match worry_decay {
-        0 => get_lcm(&monkey_working),
-        _ => 0
-    };
+            let m = &monkeys[i];
+            for item in monkey.iter() {
+                let worry = match m.1 {
+                    Operation::Square() => item * item,
+                    Operation::Add(n) => item + n,
+                    Operation::Multiply(n) => item * n,
+                } / worry_decay;
 
-    for _ in 0..rounds {
-        let mut copy: Vec<Monkey> = monkey_working.iter().map(|m| empty_monkey(m)).collect();
-        for (i_monkey, monkey) in monkey_working.iter().enumerate() {
-            inspection_counts[i_monkey] += monkey.items.len();
-            for item in monkey.items.iter() {
-                let worry: usize = get_worry(*item, monkey.operation, lcm, worry_decay);
-
-                let target = match worry % monkey.divisible_by {
-                    0 => monkey.if_true_pass_to,
-                    _ => monkey.if_false_pass_to,
+                let target = match worry % m.2 {
+                    0 => m.3,
+                    _ => m.4,
                 };
 
-                if target > i_monkey {
-                    post_proc[target].push(worry);
+                if target < i {
+                    dst[target].push(worry);
                 } else {
-                    copy[target].items.push(worry);
+                    tmp[target].push(worry);
+                    has_tmp = true;
                 }
             }
         }
-
-        while post_proc.iter().any(|v| v.len() > 0) {
-            post_proc = post_process(
-                &mut copy,
-                &post_proc,
-                &mut inspection_counts,
-                worry_decay,
-                lcm,
-            );
-        }
-        monkey_working = copy;
+        has_tmp
     }
-    inspection_counts.sort_by(|a, b| b.cmp(a));
-    (inspection_counts[0] as usize) * (inspection_counts[1] as usize)
+
+    let mut dst: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
+    let mut tmp: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
+    let mut src: Vec<Vec<usize>> = monkeys.iter().map(|m| m.0.clone()).collect();
+    let mut inspec: Vec<usize> = vec![0; monkeys.len()];
+
+    for _ in 0..rounds {
+        let mut has_tmp = step(monkeys, &mut src, &mut dst, &mut tmp, &mut inspec, worry_decay);
+
+        while has_tmp {
+            src = tmp;
+            tmp = vec![vec![]; monkeys.len()];
+            has_tmp = step(monkeys, &mut src, &mut dst, &mut tmp, &mut inspec, worry_decay);
+        }
+        src = dst;
+        tmp = vec![vec![]; monkeys.len()];
+        dst = vec![vec![]; monkeys.len()];
+    }
+
+    inspec.sort_by(|a, b| b.cmp(a));
+    (inspec[0] as usize) * (inspec[1] as usize)
 }
 
-fn post_process(
-    monkeys: &mut [Monkey],
-    post_proc: &[Vec<usize>],
-    inspection_counts: &mut [usize],
-    worry_decay: usize,
-    lcm: usize,
-) -> Vec<Vec<usize>> {
-    let mut still_process: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
-    for (i_monkey, v) in post_proc.iter().enumerate() {
-        inspection_counts[i_monkey] += v.len();
-        for item in v {
-            let worry: usize = get_worry(*item, monkeys[i_monkey].operation, lcm, worry_decay);
+fn get_lcm(monkeys: &[(Vec<usize>, Operation, usize, usize, usize)]) -> usize {
+    let mut lcm = monkeys
+        .iter()
+        .map(|m| m.2)
+        .reduce(|accum: usize, item: usize| accum * item)
+        .unwrap();
+    
+    monkeys.iter().map(|m| m.2).for_each(|mult| {
+        if (lcm / mult) % mult == 0 {
+            lcm /= mult;
+        }
+    });
 
-            let target = match worry % monkeys[i_monkey].divisible_by {
-                0 => monkeys[i_monkey].if_true_pass_to,
-                _ => monkeys[i_monkey].if_false_pass_to,
-            };
-            if target > i_monkey {
-                still_process[target].push(worry);
-            } else {
-                monkeys[target].items.push(worry);
+    lcm
+}
+
+fn part2(
+    monkeys: &[(Vec<usize>, Operation, usize, usize, usize)],
+    rounds: usize
+) -> usize {
+    fn step(
+        monkeys: &[(Vec<usize>, Operation, usize, usize, usize)],
+        src: &mut [Vec<usize>],
+        dst: &mut [Vec<usize>],
+        tmp: &mut [Vec<usize>],
+        inspec: &mut [usize],
+        lcm: usize
+    ) -> bool {
+        let mut has_tmp = false;
+        for (i, monkey) in src.iter().enumerate() {
+            inspec[i] += monkey.len();
+
+            let m = &monkeys[i];
+            for item in monkey.iter() {
+                let worry = match m.1 {
+                    Operation::Square() => item * item,
+                    Operation::Add(n) => item + n,
+                    Operation::Multiply(n) => item * n,
+                } % lcm;
+
+                let target = match worry % m.2 {
+                    0 => m.3,
+                    _ => m.4,
+                };
+
+                if target < i {
+                    dst[target].push(worry);
+                } else {
+                    tmp[target].push(worry);
+                    has_tmp = true;
+                }
             }
         }
+        has_tmp
     }
-    still_process
-}
 
-fn get_lcm(monkeys: &[Monkey]) -> usize {
-    monkeys
-        .iter()
-        .map(|m| m.divisible_by)
-        .reduce(|accum: usize, item: usize| match accum % item {
-            0 => accum,
-            _ => accum * item,
-        })
-        .unwrap()
-}
+    let mut dst: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
+    let mut tmp: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
+    let mut src: Vec<Vec<usize>> = monkeys.iter().map(|m| m.0.clone()).collect();
+    let mut inspec: Vec<usize> = vec![0; monkeys.len()];
+    let lcm = get_lcm(monkeys);
 
-fn empty_monkey(monkey: &Monkey) -> Monkey {
-    Monkey {
-        items: vec![],
-        operation: monkey.operation,
-        divisible_by: monkey.divisible_by,
-        if_true_pass_to: monkey.if_true_pass_to,
-        if_false_pass_to: monkey.if_false_pass_to,
+    for _ in 0..rounds {
+        let mut has_tmp = step(monkeys, &mut src, &mut dst, &mut tmp, &mut inspec, lcm);
+
+        while has_tmp {
+            src = tmp;
+            tmp = vec![vec![]; monkeys.len()];
+            has_tmp = step(monkeys, &mut src, &mut dst, &mut tmp, &mut inspec, lcm);
+        }
+        src = dst;
+        tmp = vec![vec![]; monkeys.len()];
+        dst = vec![vec![]; monkeys.len()];
     }
-}
 
-fn get_worry(item: usize, op: Operation, lcm: usize, worry_decay: usize) -> usize {
-    let worry = match op {
-        Operation::Square() => item * item,
-        Operation::Add(i) => item + i,
-        Operation::Multiply(i) => item * i,
-    };
-    
-    if lcm == 0 { worry / worry_decay } else { worry % lcm }
+    inspec.sort_by(|a, b| b.cmp(a));
+    (inspec[0] as usize) * (inspec[1] as usize)
 }
