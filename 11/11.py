@@ -3,6 +3,7 @@ import math
 from copy import deepcopy
 from dataclasses import dataclass
 from collections import deque
+from time import perf_counter_ns as timestamp_nano
 
 
 @dataclass
@@ -55,22 +56,31 @@ def parse_monkeys(path: str):
     return monkeys
 
 
-def solve(monkeys: list[Monkey], rounds: int, worry_decay: int = 0):
-    if not worry_decay:
-        lcm = math.lcm(*[monkey.div_by for monkey in monkeys])
-
+def part1(monkeys: list[Monkey], rounds: int, worry_decay: int = 0) -> int:
     inter_count = [0] * len(monkeys)
 
     for _ in range(rounds):
         for i, monkey in enumerate(monkeys):
             inter_count[i] += len(monkey.items)
             while monkey.items:
-                worry = monkey()
-                if not worry_decay:
-                    worry %= lcm
+                worry = monkey() // worry_decay
+                if worry % monkey.div_by == 0:
+                    monkeys[monkey.true_target].items.append(worry)
                 else:
-                    worry //= worry_decay
+                    monkeys[monkey.false_target].items.append(worry)
                 
+    return math.prod(sorted(inter_count)[-2:])
+
+
+def part2(monkeys: list[Monkey], rounds: int) -> int:
+    lcm = math.lcm(*[monkey.div_by for monkey in monkeys])
+    inter_count = [0] * len(monkeys)
+
+    for _ in range(rounds):
+        for i, monkey in enumerate(monkeys):
+            inter_count[i] += len(monkey.items)
+            while monkey.items:
+                worry = monkey() % lcm
                 if worry % monkey.div_by == 0:
                     monkeys[monkey.true_target].items.append(worry)
                 else:
@@ -79,7 +89,12 @@ def solve(monkeys: list[Monkey], rounds: int, worry_decay: int = 0):
     return math.prod(sorted(inter_count)[-2:])
 
 if __name__ == '__main__':
+    start = timestamp_nano()
+
     monkeys = parse_monkeys('11/input.txt')
 
-    print(f'part1: {solve(deepcopy(monkeys), rounds=20, worry_decay=3)}')
-    print(f'part1: {solve(deepcopy(monkeys), rounds=10_000)}')
+    print(f'part1: {part1(deepcopy(monkeys), 20, worry_decay=3)}')
+    print(f'part2: {part2(deepcopy(monkeys), 10_000)}')
+
+    end = timestamp_nano()
+    print(f'time: {(end - start) / 1e6:.3f}ms')
