@@ -22,10 +22,10 @@ fn main() {
 
     let monkeys = parse_monkeys(fs::read_to_string("11/input.txt").expect("File not found"));
 
-    let p1 = solve(monkeys.clone(), 20, 3);
+    let p1 = solve(monkeys.clone(), 20, 3, false);
     println!("part1: {}", p1);
 
-    let p2 = solve(monkeys, 10_000, 1);
+    let p2 = solve(monkeys, 10_000, 1, true);
     println!("part2: {}", p2);
 
     println!("time: {:?}", start.elapsed());
@@ -83,16 +83,20 @@ fn parse_monkeys(data: String) -> Vec<Monkey> {
     monkeys
 }
 
-fn solve(monkeys: Vec<Monkey>, rounds: usize, worry_decay: usize) -> usize {
+fn solve(monkeys: Vec<Monkey>, rounds: usize, worry_decay: usize, use_lcm: bool) -> usize {
     let mut inspection_counts: Vec<usize> = vec![0; monkeys.len()];
     let mut post_proc: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
     let mut monkey_working = monkeys;
 
-    let lcm: usize = get_lcm(&monkey_working);
+    let lcm: usize = match use_lcm {
+        true => get_lcm(&monkey_working),
+        false => 0
+    };
 
     for _ in 0..rounds {
         let mut copy: Vec<Monkey> = monkey_working.iter().map(|m| empty_monkey(m)).collect();
         for (i_monkey, monkey) in monkey_working.iter().enumerate() {
+            inspection_counts[i_monkey] += monkey.items.len();
             for item in monkey.items.iter() {
                 let worry: usize = get_worry(*item, monkey.operation, lcm, worry_decay);
 
@@ -106,7 +110,6 @@ fn solve(monkeys: Vec<Monkey>, rounds: usize, worry_decay: usize) -> usize {
                 } else {
                     copy[target].items.push(worry);
                 }
-                inspection_counts[i_monkey] += 1;
             }
         }
 
@@ -134,6 +137,7 @@ fn post_process(
 ) -> Vec<Vec<usize>> {
     let mut still_process: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
     for (i_monkey, v) in post_proc.iter().enumerate() {
+        inspection_counts[i_monkey] += v.len();
         for item in v {
             let worry: usize = get_worry(*item, monkeys[i_monkey].operation, lcm, worry_decay);
 
@@ -146,7 +150,6 @@ fn post_process(
             } else {
                 monkeys[target].items.push(worry);
             }
-            inspection_counts[i_monkey] += 1;
         }
     }
     still_process
@@ -179,5 +182,6 @@ fn get_worry(item: usize, op: Operation, lcm: usize, worry_decay: usize) -> usiz
         Operation::Add(i) => item + i,
         Operation::Multiply(i) => item * i,
     };
-    (worry / worry_decay) % lcm
+    
+    if lcm == 0 { worry / worry_decay } else { (worry / worry_decay) % lcm }
 }
