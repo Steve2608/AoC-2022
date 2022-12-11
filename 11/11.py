@@ -55,8 +55,8 @@ def parse_monkeys(path: str):
     return monkeys
 
 
-def solve(monkeys: list[Monkey], rounds: int, worry_decay: int = 1, use_lcm: bool = False):
-    if use_lcm:
+def solve(monkeys: list[Monkey], rounds: int, worry_decay: int = 0):
+    if not worry_decay:
         lcm = math.lcm(*[monkey.div_by for monkey in monkeys])
 
     inter_count = [0] * len(monkeys)
@@ -65,9 +65,11 @@ def solve(monkeys: list[Monkey], rounds: int, worry_decay: int = 1, use_lcm: boo
         for i, monkey in enumerate(monkeys):
             inter_count[i] += len(monkey.items)
             while monkey.items:
-                worry = (monkey() // worry_decay)
-                if use_lcm:
+                worry = monkey()
+                if not worry_decay:
                     worry %= lcm
+                else:
+                    worry //= worry_decay
                 
                 if worry % monkey.div_by == 0:
                     monkeys[monkey.true_target].items.append(worry)
@@ -80,4 +82,4 @@ if __name__ == '__main__':
     monkeys = parse_monkeys('11/input.txt')
 
     print(f'part1: {solve(deepcopy(monkeys), rounds=20, worry_decay=3)}')
-    print(f'part1: {solve(deepcopy(monkeys), rounds=10_000, use_lcm=True)}')
+    print(f'part1: {solve(deepcopy(monkeys), rounds=10_000)}')

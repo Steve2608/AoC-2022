@@ -22,10 +22,10 @@ fn main() {
 
     let monkeys = parse_monkeys(fs::read_to_string("11/input.txt").expect("File not found"));
 
-    let p1 = solve(monkeys.clone(), 20, 3, false);
+    let p1 = solve(monkeys.clone(), 20, 3);
     println!("part1: {}", p1);
 
-    let p2 = solve(monkeys, 10_000, 1, true);
+    let p2 = solve(monkeys, 10_000, 0);
     println!("part2: {}", p2);
 
     println!("time: {:?}", start.elapsed());
@@ -83,14 +83,14 @@ fn parse_monkeys(data: String) -> Vec<Monkey> {
     monkeys
 }
 
-fn solve(monkeys: Vec<Monkey>, rounds: usize, worry_decay: usize, use_lcm: bool) -> usize {
+fn solve(monkeys: Vec<Monkey>, rounds: usize, worry_decay: usize) -> usize {
     let mut inspection_counts: Vec<usize> = vec![0; monkeys.len()];
     let mut post_proc: Vec<Vec<usize>> = vec![vec![]; monkeys.len()];
     let mut monkey_working = monkeys;
 
-    let lcm: usize = match use_lcm {
-        true => get_lcm(&monkey_working),
-        false => 0
+    let lcm: usize = match worry_decay {
+        0 => get_lcm(&monkey_working),
+        _ => 0
     };
 
     for _ in 0..rounds {
@@ -183,5 +183,5 @@ fn get_worry(item: usize, op: Operation, lcm: usize, worry_decay: usize) -> usiz
         Operation::Multiply(i) => item * i,
     };
     
-    if lcm == 0 { worry / worry_decay } else { (worry / worry_decay) % lcm }
+    if lcm == 0 { worry / worry_decay } else { worry % lcm }
 }
