@@ -7,8 +7,13 @@ fn main() {
 
     let data: String = fs::read_to_string("09/input.txt").expect("File not found");
     let instr: Vec<(char, usize)> = data
-        .split('\n')
-        .map(|line| (line.chars().next().unwrap(), line[2..line.len()].parse::<usize>().unwrap()))
+        .lines()
+        .map(|line| {
+            (
+                line.chars().next().unwrap(),
+                line[2..line.len()].parse::<usize>().unwrap(),
+            )
+        })
         .collect();
 
     let (p1, p2) = part12(&instr, 9);

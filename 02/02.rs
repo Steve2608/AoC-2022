@@ -7,7 +7,7 @@ fn main() {
     let data: String = fs::read_to_string("02/input.txt").expect("File not found");
 
     let games: Vec<(char, char)> = data
-        .split('\n')
+        .lines()
         .map(|line| {
             let mut chars = line.chars();
             let c1: char = chars.next().unwrap();

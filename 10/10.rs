@@ -5,7 +5,7 @@ fn main() {
     let start = Instant::now();
 
     let data: String = fs::read_to_string("10/input.txt").expect("File not found");
-    let instructions: Vec<&str> = data.split('\n').collect();
+    let instructions: Vec<&str> = data.lines().collect();
 
     println!("part1: {}", part1(&instructions));
     println!("part2:\n{}", part2(&instructions, 40));
@@ -44,7 +44,7 @@ fn part2(instructions: &[&str], crt_width: usize) -> String {
     }
 
     fn append_buffer(i: i32, sprite: i32, result: &mut String) {
-        if sprite - 1 <= i && i <= sprite + 1  {
+        if sprite - 1 <= i && i <= sprite + 1 {
             result.push('#');
         } else {
             result.push('.');
@@ -69,7 +69,7 @@ fn part2(instructions: &[&str], crt_width: usize) -> String {
         }
     }
     // not even mad
-    for i in (crt_width..6*crt_width).step_by(crt_width).rev() {
+    for i in (crt_width..6 * crt_width).step_by(crt_width).rev() {
         buf.insert(i, '\n');
     }
     buf

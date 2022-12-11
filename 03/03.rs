@@ -6,7 +6,7 @@ fn main() {
 
     let data: String = fs::read_to_string("03/input.txt").expect("File not found");
 
-    let rucksacks: Vec<&str> = data.split('\n').collect();
+    let rucksacks: Vec<&str> = data.lines().collect();
 
     println!("part1: {}", part1(&rucksacks));
     println!("part2: {}", part2(&rucksacks));

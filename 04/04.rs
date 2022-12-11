@@ -7,7 +7,7 @@ fn main() {
     let data: String = fs::read_to_string("04/input.txt").expect("File not found");
 
     let ranges: Vec<i32> = data
-        .split('\n')
+        .lines()
         .flat_map(|line| {
             line.split(',')
                 .flat_map(|tuple| tuple.split('-').map(|num| num.parse::<i32>().unwrap()))

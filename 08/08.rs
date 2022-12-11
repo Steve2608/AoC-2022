@@ -7,7 +7,7 @@ fn main() {
 
     let data: String = fs::read_to_string("08/input.txt").expect("File not found");
     let grid: Vec<Vec<u8>> = data
-        .split('\n')
+        .lines()
         .map(|line| line.as_bytes().iter().map(|num| num - b'0').collect())
         .collect();
 
@@ -75,7 +75,10 @@ fn part2(grid: &[Vec<u8>]) -> usize {
                 score_right += 1;
             }
 
-            scenic_score = max(scenic_score, score_up * score_left * score_down * score_right);
+            scenic_score = max(
+                scenic_score,
+                score_up * score_left * score_down * score_right,
+            );
         }
     }
     scenic_score

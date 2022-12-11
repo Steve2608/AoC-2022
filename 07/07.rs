@@ -11,7 +11,8 @@ fn main() {
     println!("part1: {}", p1);
 
     let free_size: usize = sizes["/"] - (70_000_000 - 30_000_000);
-    let p2: usize = *sizes.values()
+    let p2: usize = *sizes
+        .values()
         .filter(|size| **size >= free_size)
         .min()
         .unwrap();
@@ -25,7 +26,7 @@ fn file_system(path: &str) -> HashMap<String, usize> {
     let mut sizes: HashMap<String, usize> = HashMap::new();
     let mut cwd: Vec<String> = vec!["".to_string()];
 
-    for line in data.split('\n') {
+    for line in data.lines() {
         let parts: Vec<&str> = line.split(' ').collect();
         match parts[0..2] {
             ["$", "cd"] => match parts[2] {
@@ -52,7 +53,7 @@ fn file_system(path: &str) -> HashMap<String, usize> {
                         dir.push('/');
                         *sizes.entry(dir.to_string()).or_insert(0) += val;
                     }
-                } 
+                }
             }
             _ => {}
         }

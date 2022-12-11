@@ -23,7 +23,7 @@ fn parse_input() -> (Vec<String>, Vec<i8>) {
     let instr: &str = parts[1];
 
     let mut data: Vec<String> = vec![String::new(); N_STACKS];
-    let mut lines: Vec<&str> = initial.split('\n').collect();
+    let mut lines: Vec<&str> = initial.lines().collect();
     // remove numbered line
     lines.pop();
     for line in lines {
@@ -36,7 +36,7 @@ fn parse_input() -> (Vec<String>, Vec<i8>) {
     }
 
     let instructions: Vec<i8> = instr
-        .split('\n')
+        .lines()
         .flat_map(|line| {
             let parts: Vec<&str> = line.split(' ').collect();
             // only take the numbers

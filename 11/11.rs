@@ -44,7 +44,7 @@ fn parse_monkeys(data: String) -> Vec<Monkey> {
                     If true: throw to monkey 5
                     If false: throw to monkey 4
             */
-            let lines: Vec<&str> = chunk.split('\n').map(|line| line.trim()).collect();
+            let lines: Vec<&str> = chunk.lines().map(|line| line.trim()).collect();
             let starting_items: Vec<usize> = lines[1]["Starting items: ".len()..lines[1].len()]
                 .split(", ")
                 .map(|num| num.parse::<usize>().unwrap())
