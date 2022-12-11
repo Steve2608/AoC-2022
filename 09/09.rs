@@ -5,8 +5,8 @@ use std::time::Instant;
 fn main() {
     let start = Instant::now();
 
-    let data: String = fs::read_to_string("09/input.txt").expect("File not found");
-    let instr: Vec<(char, usize)> = data
+    let instr: Vec<(char, usize)> = fs::read_to_string("09/input.txt")
+        .expect("File not found")
         .lines()
         .map(|line| {
             (

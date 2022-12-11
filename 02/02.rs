@@ -4,9 +4,8 @@ use std::time::Instant;
 fn main() {
     let start = Instant::now();
 
-    let data: String = fs::read_to_string("02/input.txt").expect("File not found");
-
-    let games: Vec<(char, char)> = data
+    let games: Vec<(char, char)> = fs::read_to_string("02/input.txt")
+        .expect("File not found")
         .lines()
         .map(|line| {
             let mut chars = line.chars();

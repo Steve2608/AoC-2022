@@ -5,8 +5,8 @@ use std::time::Instant;
 fn main() {
     let start = Instant::now();
 
-    let data: String = fs::read_to_string("08/input.txt").expect("File not found");
-    let grid: Vec<Vec<u8>> = data
+    let grid: Vec<Vec<u8>> = fs::read_to_string("08/input.txt")
+        .expect("File not found")
         .lines()
         .map(|line| line.as_bytes().iter().map(|num| num - b'0').collect())
         .collect();

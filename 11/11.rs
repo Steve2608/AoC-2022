@@ -20,8 +20,7 @@ struct Monkey {
 fn main() {
     let start = Instant::now();
 
-    let data: String = fs::read_to_string("11/input.txt").expect("File not found");
-    let monkeys = parse_monkeys(data);
+    let monkeys = parse_monkeys(fs::read_to_string("11/input.txt").expect("File not found"));
 
     let p1 = solve(monkeys.clone(), 20, 3);
     println!("part1: {}", p1);

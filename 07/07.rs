@@ -22,11 +22,10 @@ fn main() {
 }
 
 fn file_system(path: &str) -> HashMap<String, usize> {
-    let data: String = fs::read_to_string(path).expect("File not found");
     let mut sizes: HashMap<String, usize> = HashMap::new();
     let mut cwd: Vec<String> = vec!["".to_string()];
 
-    for line in data.lines() {
+    for line in fs::read_to_string(path).expect("File not found").lines() {
         let parts: Vec<&str> = line.split(' ').collect();
         match parts[0..2] {
             ["$", "cd"] => match parts[2] {

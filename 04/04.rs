@@ -4,9 +4,8 @@ use std::time::Instant;
 fn main() {
     let start = Instant::now();
 
-    let data: String = fs::read_to_string("04/input.txt").expect("File not found");
-
-    let ranges: Vec<i32> = data
+    let ranges: Vec<i32> = fs::read_to_string("04/input.txt")
+        .expect("File not found")
         .lines()
         .flat_map(|line| {
             line.split(',')
