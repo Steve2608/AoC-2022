@@ -1,5 +1,6 @@
 import dataclasses
 import math
+import re
 from copy import deepcopy
 from dataclasses import dataclass
 from collections import deque
@@ -39,12 +40,17 @@ def parse_monkeys(path: str):
         #   Test: divisible by 19
         #     If true: throw to monkey 6
         #     If false: throw to monkey 7
-        lines = block.split('\n')
-        items = lines[1].strip()[len('Starting items: '):].split(', ')
-        operation, operand = lines[2].split(' ')[-2:]
-        div_by = lines[3].split(' ')[-1]
-        true_target = lines[4].split(' ')[-1]
-        false_target = lines[5].split(' ')[-1]
+        match = re.search(r'''Monkey \d+:
+  Starting items: (?P<item>\d+)(?P<items>(?:, \d+)*)
+  Operation: new = old (?P<operation>\+|\*) (?P<operand>\d+|old)
+  Test: divisible by (?P<divisible>\d+)
+    If true: throw to monkey (?P<true>\d+)
+    If false: throw to monkey (?P<false>\d+)''', block, re.MULTILINE)
+        items = [match.group('item')] + list(filter(bool, match.group('items').split(', ')))
+        operation, operand = match.group('operation'), match.group('operand')
+        div_by = match.group('divisible')
+        true_target = match.group('true')
+        false_target = match.group('false')
 
         try:
             operand = int(operand)
@@ -87,6 +93,7 @@ def part2(monkeys: list[Monkey], rounds: int) -> int:
                     monkeys[monkey.false_target].items.append(worry)
                 
     return math.prod(sorted(inter_count)[-2:])
+
 
 if __name__ == '__main__':
     start = timestamp_nano()
