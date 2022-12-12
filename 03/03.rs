@@ -14,16 +14,16 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn char_to_score(char: u8) -> u8 {
-    if char <= b'Z' {
-        27 + (char - b'A')
+fn char_to_score(chr: u8) -> u8 {
+    if chr <= b'Z' {
+        27 + (chr - b'A')
     } else {
-        1 + (char - b'a')
+        1 + (chr - b'a')
     }
 }
 
-fn part1(rucksacks: &[&str]) -> i32 {
-    let mut score: i32 = 0;
+fn part1(rucksacks: &[&str]) -> usize {
+    let mut score: usize = 0;
     for line in rucksacks {
         let len = line.len() / 2;
         let left = &line[0..len];
@@ -31,25 +31,23 @@ fn part1(rucksacks: &[&str]) -> i32 {
 
         for c in left.chars() {
             if right.contains(c) {
-                score += char_to_score(c as u8) as i32;
+                score += char_to_score(c as u8) as usize;
                 break;
             }
         }
     }
-
     score
 }
 
-fn part2(rucksacks: &[&str]) -> i32 {
-    let mut score: i32 = 0;
+fn part2(rucksacks: &[&str]) -> usize {
+    let mut score: usize = 0;
     for lines in rucksacks.chunks(3) {
         'outer: for c in lines[0].chars() {
             if lines[1].contains(c) && lines[2].contains(c) {
-                score += char_to_score(c as u8) as i32;
+                score += char_to_score(c as u8) as usize;
                 break 'outer;
             }
         }
     }
-
     score
 }

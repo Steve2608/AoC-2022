@@ -2,16 +2,19 @@ use std::collections::HashSet;
 use std::fs;
 use std::time::Instant;
 
+type Coord = i16;
+type N = u8;
+
 fn main() {
     let start = Instant::now();
 
-    let instr: Vec<(char, usize)> = fs::read_to_string("09/input.txt")
+    let instr: Vec<(char, N)> = fs::read_to_string("09/input.txt")
         .expect("File not found")
         .lines()
         .map(|line| {
             (
                 line.chars().next().unwrap(),
-                line[2..line.len()].parse::<usize>().unwrap(),
+                line[2..line.len()].parse::<N>().unwrap(),
             )
         })
         .collect();
@@ -23,11 +26,11 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part12(instructions: &[(char, usize)], n_knots: usize) -> (usize, usize) {
-    let mut visited1: HashSet<(i16, i16)> = HashSet::new();
-    let mut visited2: HashSet<(i16, i16)> = HashSet::new();
+fn part12(instructions: &[(char, N)], n_knots: usize) -> (usize, usize) {
+    let mut visited1: HashSet<(Coord, Coord)> = HashSet::new();
+    let mut visited2: HashSet<(Coord, Coord)> = HashSet::new();
 
-    let mut knots: Vec<(i16, i16)> = vec![(0, 0); n_knots + 1];
+    let mut knots: Vec<(Coord, Coord)> = vec![(0, 0); n_knots + 1];
     visited1.insert(knots[n_knots]);
     visited2.insert(knots[n_knots]);
 

@@ -13,16 +13,16 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part1(instructions: &[&str]) -> i32 {
-    fn sig_stren(i: i32, x: i32, signal: &mut i32) {
+fn part1(instructions: &[&str]) -> usize {
+    fn sig_stren(i: i32, x: i32, signal: &mut usize) {
         if (i - 20) % 40 == 0 {
-            *signal += i * x;
+            *signal += (i * x) as usize;
         }
     }
 
     let mut i = 1;
     let mut x = 1;
-    let mut signal = 0;
+    let mut signal: usize = 0;
     for &instr in instructions {
         if instr == "noop" {
             i += 1;

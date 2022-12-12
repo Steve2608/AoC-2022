@@ -4,10 +4,12 @@ use std::time::Instant;
 static N_STACKS: usize = 9;
 static N_INSTR_PARTS: usize = 3;
 
+type Instr = u8;
+
 fn main() {
     let start = Instant::now();
 
-    let (data, instructions): (Vec<String>, Vec<i8>) = parse_input();
+    let (data, instructions): (Vec<String>, Vec<Instr>) = parse_input();
 
     println!("part1: {}", part1(&data, &instructions));
     println!("part1: {}", part2(&data, &instructions));
@@ -15,7 +17,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn parse_input() -> (Vec<String>, Vec<i8>) {
+fn parse_input() -> (Vec<String>, Vec<Instr>) {
     let content: String = fs::read_to_string("05/input.txt").expect("File not found");
 
     let parts: Vec<&str> = content.split("\n\n").collect();
@@ -35,20 +37,20 @@ fn parse_input() -> (Vec<String>, Vec<i8>) {
         }
     }
 
-    let instructions: Vec<i8> = instr
+    let instructions: Vec<Instr> = instr
         .lines()
         .flat_map(|line| {
             let parts: Vec<&str> = line.split(' ').collect();
             // only take the numbers
             [parts[1], parts[3], parts[5]]
         })
-        .map(|num| num.parse::<i8>().unwrap())
+        .map(|num| num.parse::<Instr>().unwrap())
         .collect();
 
     (data, instructions)
 }
 
-fn part1(data: &[String], instructions: &[i8]) -> String {
+fn part1(data: &[String], instructions: &[Instr]) -> String {
     let mut containers = data.to_vec();
 
     for instr in instructions.chunks(N_INSTR_PARTS) {
@@ -70,7 +72,7 @@ fn part1(data: &[String], instructions: &[i8]) -> String {
         .collect()
 }
 
-fn part2(data: &[String], instructions: &[i8]) -> String {
+fn part2(data: &[String], instructions: &[Instr]) -> String {
     let mut containers = data.to_vec();
 
     for instr in instructions.chunks(N_INSTR_PARTS) {

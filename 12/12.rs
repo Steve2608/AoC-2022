@@ -2,6 +2,9 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::fs;
 use std::time::Instant;
 
+type Coord = u8;
+type Height = u16;
+
 fn main() {
     let start = Instant::now();
 
@@ -13,7 +16,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn parse_input(path: &str) -> (Vec<Vec<char>>, (u8, u8), Vec<(u8, u8)>, (u8, u8)) {
+fn parse_input(path: &str) -> (Vec<Vec<char>>, (Coord, Coord), Vec<(Coord, Coord)>, (Coord, Coord)) {
     let map: Vec<Vec<char>> = fs::read_to_string(path)
         .expect("File not found")
         .lines()
@@ -26,25 +29,25 @@ fn parse_input(path: &str) -> (Vec<Vec<char>>, (u8, u8), Vec<(u8, u8)>, (u8, u8)
     for (i, x) in map.iter().enumerate() {
         for (j, &y) in x.iter().enumerate() {
             match y {
-                'E' => end = (i as u8, j as u8),
-                'S' => s = (i as u8, j as u8),
+                'E' => end = (i as Coord, j as Coord),
+                'S' => s = (i as Coord, j as Coord),
                 'a' => {
                     // if we're surrounded by other 'a', 'S' or something unreachable, don't even consider this start
                     // they can't even be local optima
                     if !(i > 0
-                        && (height(&map, ((i - 1) as u8, j as u8)) == 0
-                            || height(&map, ((i - 1) as u8, j as u8)) >= 2)
+                        && (height(&map, ((i - 1) as Coord, j as Coord)) == 0
+                            || height(&map, ((i - 1) as Coord, j as Coord)) >= 2)
                         && i < map.len() - 1
-                        && (height(&map, ((i + 1) as u8, j as u8)) == 0
-                            || height(&map, ((i + 1) as u8, j as u8)) >= 2)
+                        && (height(&map, ((i + 1) as Coord, j as Coord)) == 0
+                            || height(&map, ((i + 1) as Coord, j as Coord)) >= 2)
                         && j > 0
-                        && (height(&map, (i as u8, (j - 1) as u8)) == 0
-                            || height(&map, (i as u8, (j - 1) as u8)) >= 2)
+                        && (height(&map, (i as Coord, (j - 1) as Coord)) == 0
+                            || height(&map, (i as Coord, (j - 1) as Coord)) >= 2)
                         && j < map[i].len() - 1
-                        && (height(&map, (i as u8, (j + 1) as u8)) == 0
-                            || height(&map, (i as u8, (j + 1) as u8)) >= 2))
+                        && (height(&map, (i as Coord, (j + 1) as Coord)) == 0
+                            || height(&map, (i as Coord, (j + 1) as Coord)) >= 2))
                     {
-                        strt.push((i as u8, j as u8))
+                        strt.push((i as Coord, j as Coord))
                     }
                 }
                 _ => {}
@@ -54,33 +57,33 @@ fn parse_input(path: &str) -> (Vec<Vec<char>>, (u8, u8), Vec<(u8, u8)>, (u8, u8)
     (map, s, strt, end)
 }
 
-fn part1(map: &[Vec<char>], start: (u8, u8), end: (u8, u8)) -> usize {
-    let mut visited: HashSet<(u8, u8)> = HashSet::new();
-    let mut distances: HashMap<(u8, u8), i16> = HashMap::new();
+fn part1(map: &[Vec<char>], start: (Coord, Coord), end: (Coord, Coord)) -> usize {
+    let mut visited: HashSet<(Coord, Coord)> = HashSet::new();
+    let mut distances: HashMap<(Coord, Coord), Height> = HashMap::new();
     distances.insert(start, 0);
     // counting start as first step - will have to subtract later on
-    let mut fringe: VecDeque<(u8, u8)> = VecDeque::from([start]);
+    let mut fringe: VecDeque<(Coord, Coord)> = VecDeque::from([start]);
 
     bfs(map, &mut visited, &mut distances, &mut fringe);
 
     distances[&end] as usize
 }
 
-fn height(map: &[Vec<char>], idx: (u8, u8)) -> usize {
+fn height(map: &[Vec<char>], idx: (Coord, Coord)) -> usize {
     let c: char = map[idx.0 as usize][idx.1 as usize];
 
     match c {
         'S' => 0,
         'E' => 26,
-        _ => (c as u8 - b'a') as usize,
+        _ => (c as Coord - b'a') as usize,
     }
 }
 
 fn bfs(
     map: &[Vec<char>],
-    visited: &mut HashSet<(u8, u8)>,
-    distances: &mut HashMap<(u8, u8), i16>,
-    fringe: &mut VecDeque<(u8, u8)>,
+    visited: &mut HashSet<(Coord, Coord)>,
+    distances: &mut HashMap<(Coord, Coord), Height>,
+    fringe: &mut VecDeque<(Coord, Coord)>,
 ) {
     while !fringe.is_empty() {
         let curr = fringe.pop_front().unwrap();
@@ -134,19 +137,19 @@ fn bfs(
     }
 }
 
-fn part2(map: &[Vec<char>], strt: &[(u8, u8)], end: (u8, u8)) -> usize {
-    let mut min_dist: i16 = i16::MAX;
+fn part2(map: &[Vec<char>], strt: &[(Coord, Coord)], end: (Coord, Coord)) -> usize {
+    let mut min_dist: Height = Height::MAX;
 
     for &start in strt {
-        let mut visited: HashSet<(u8, u8)> = HashSet::new();
-        let mut distances: HashMap<(u8, u8), i16> = HashMap::new();
+        let mut visited: HashSet<(Coord, Coord)> = HashSet::new();
+        let mut distances: HashMap<(Coord, Coord), Height> = HashMap::new();
         distances.insert(start, 0);
         // counting start as first step - will have to subtract later on
-        let mut fringe: VecDeque<(u8, u8)> = VecDeque::from([start]);
+        let mut fringe: VecDeque<(Coord, Coord)> = VecDeque::from([start]);
 
         bfs(map, &mut visited, &mut distances, &mut fringe);
 
-        if *distances.get(&end).unwrap_or(&i16::MAX) < min_dist {
+        if *distances.get(&end).unwrap_or(&Height::MAX) < min_dist {
             min_dist = distances[&end];
         }
     }

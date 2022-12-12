@@ -1,15 +1,17 @@
 use std::fs;
 use std::time::Instant;
 
+type Range = u8;
+
 fn main() {
     let start = Instant::now();
 
-    let ranges: Vec<i32> = fs::read_to_string("04/input.txt")
+    let ranges: Vec<Range> = fs::read_to_string("04/input.txt")
         .expect("File not found")
         .lines()
         .flat_map(|line| {
             line.split(',')
-                .flat_map(|tuple| tuple.split('-').map(|num| num.parse::<i32>().unwrap()))
+                .flat_map(|tuple| tuple.split('-').map(|num| num.parse::<Range>().unwrap()))
         })
         .collect();
 
@@ -19,7 +21,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part1(ranges: &[i32]) -> i32 {
+fn part1(ranges: &[Range]) -> usize {
     let mut count = 0;
     for r in ranges.chunks(4) {
         // r[0] - r[1], r[2] - r[3]
@@ -30,7 +32,7 @@ fn part1(ranges: &[i32]) -> i32 {
     count
 }
 
-fn part2(ranges: &[i32]) -> i32 {
+fn part2(ranges: &[Range]) -> usize {
     let mut count = 0;
     for r in ranges.chunks(4) {
         // r[0] - r[1], r[2] - r[3]

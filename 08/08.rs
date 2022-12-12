@@ -2,10 +2,12 @@ use std::cmp::max;
 use std::fs;
 use std::time::Instant;
 
+type Height = u8;
+
 fn main() {
     let start = Instant::now();
 
-    let grid: Vec<Vec<u8>> = fs::read_to_string("08/input.txt")
+    let grid: Vec<Vec<Height>> = fs::read_to_string("08/input.txt")
         .expect("File not found")
         .lines()
         .map(|line| line.as_bytes().iter().map(|num| num - b'0').collect())
@@ -17,7 +19,7 @@ fn main() {
     println!("time: {:?}", start.elapsed());
 }
 
-fn part1(grid: &[Vec<u8>]) -> usize {
+fn part1(grid: &[Vec<Height>]) -> usize {
     // no double counting on corners
     let mut n_visible = grid.len() * 2 + grid[0].len() * 2 - 4;
 
@@ -39,7 +41,7 @@ fn part1(grid: &[Vec<u8>]) -> usize {
     n_visible
 }
 
-fn part2(grid: &[Vec<u8>]) -> usize {
+fn part2(grid: &[Vec<Height>]) -> usize {
     let mut scenic_score = 0;
     for (x, row) in grid.iter().enumerate() {
         for (y, &tree) in row.iter().enumerate() {
