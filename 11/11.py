@@ -41,12 +41,12 @@ def parse_monkeys(path: str):
         #     If true: throw to monkey 6
         #     If false: throw to monkey 7
         match = re.search(r'''Monkey \d+:
-  Starting items: (?P<item>\d+)(?P<items>(?:, \d+)*)
+  Starting items: (?P<items>(?:\d+(?:, )?)*)
   Operation: new = old (?P<operation>\+|\*) (?P<operand>\d+|old)
   Test: divisible by (?P<divisible>\d+)
     If true: throw to monkey (?P<true>\d+)
     If false: throw to monkey (?P<false>\d+)''', block, re.MULTILINE)
-        items = [match.group('item')] + list(filter(bool, match.group('items').split(', ')))
+        items = match.group('items').split(', ')
         operation, operand = match.group('operation'), match.group('operand')
         div_by = match.group('divisible')
         true_target = match.group('true')
