@@ -7,7 +7,7 @@ from collections import deque
 from time import perf_counter_ns as timestamp_nano
 
 
-@dataclass
+@dataclass(frozen=True, slots=True, repr=False, eq=False, order=False, unsafe_hash=False)
 class Monkey:
     items: dataclasses.field(default_factory=deque)
     operation: str
