@@ -2,9 +2,8 @@
 .idea/
 .vscode/
 
-# no input.txt files
-*/input.txt
-*/debug.txt
+# no .txt files
+??/*.txt
 
 # compilates
 ??/??_c
