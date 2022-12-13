@@ -19,50 +19,53 @@ fn compare(line1: &[char], line2: &[char]) -> Ordering {
     let mut q2: VecDeque<char> = line2.iter().copied().collect();
 
     while !q1.is_empty() {
-        // as long as they're identical, move on
-        while q1[0] == q2[0] && !('0' <= q1[0] && q1[0] <= '9') {
+        // as long as they're identical, but NOT a number, move on
+        while q1[0] == q2[0] && !q1[0].is_ascii_digit() {
             q1.pop_front();
             q2.pop_front();
         }
-        if q1[0] == ']' || q2[0] == ',' {
+
+        // q1's list ran out
+        if q1[0] == ']' {
             return Ordering::Less;
-        } else if q1[0] == ',' || q2[0] == ']' {
+        }
+
+        // q2's list ran out
+        if q2[0] == ']' {
             return Ordering::Greater;
-        } else if q1[0] == '[' {
+        }
+
+        // q1 is a list, q2 isn't
+        if q1[0] == '[' {
             let mut i = 0;
-            while '0' <= q2[i] && q2[i] <= '9' {
+            while q2[i].is_ascii_digit() {
                 i += 1;
             }
-            if i > 0 {
-                // wrap first number
-                q2.insert(i, ']');
-                q2.insert(0, '[');
-            }
-            continue;
+            q2.insert(i, ']');
+            q2.insert(0, '[');
         } else if q2[0] == '[' {
+            // q2 is a list, q1 isn't
             let mut i = 0;
-            while '0' <= q1[i] && q1[i] <= '9' {
+            while q1[i].is_ascii_digit() {
                 i += 1;
             }
-            if i > 0 {
-                // wrap first number
-                q1.insert(i, ']');
-                q1.insert(0, '[');
-            }
-            continue;
+            q1.insert(i, ']');
+            q1.insert(0, '[');
         } else {
+            // both are numbers
             let mut n1 = 0;
-            while '0' <= q1[0] && q1[0] <= '9' {
+            while q1[0].is_ascii_digit() {
                 let c = (q1.pop_front().unwrap() as u8 - b'0') as i32;
-                n1 *= 10;
-                n1 += c;
+                n1 = n1 * 10 + c;
             }
+
             let mut n2 = 0;
-            while '0' <= q2[0] && q2[0] <= '9' {
+            while q2[0].is_ascii_digit() {
                 let c = (q2.pop_front().unwrap() as u8 - b'0') as i32;
-                n2 *= 10;
-                n2 += c;
+                n2 = n2 * 10 + c;
             }
+
+            // if both numbers are the same, just continue
             if n1 != n2 {
                 if n1 < n2 {
                     return Ordering::Less;
@@ -72,7 +75,8 @@ fn compare(line1: &[char], line2: &[char]) -> Ordering {
             }
         }
     }
-    panic!()
+    // lists are assumed to be distinct by order
+    Ordering::Equal
 }
 
 fn part1(data: &str) -> usize {
@@ -104,12 +108,12 @@ fn part2(data: &str) -> usize {
     let two = packets
         .iter()
         .position(|l| l.iter().collect::<String>() == "[[2]]")
-        .unwrap()
-        + 1;
+        .unwrap();
+
     let six = packets
         .iter()
         .position(|l| l.iter().collect::<String>() == "[[6]]")
-        .unwrap()
-        + 1;
-    two * six
+        .unwrap();
+
+    (two + 1) * (six + 1)
 }
