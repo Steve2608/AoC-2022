@@ -4,7 +4,7 @@ from functools import cmp_to_key
 from timing_util import print_elapsed, timestamp_nano
 
 
-def cmp_distress(left, right):
+def cmp_distress(left, right) -> int:
     # both are integers, return integer difference
     if isinstance(left, int) and isinstance(right, int):
         return left - right
@@ -24,12 +24,12 @@ def cmp_distress(left, right):
     return len(left) - len(right)
 
 
-def part1(data: str):
+def part1(data: str) -> int:
     pairs = [list(map(eval, batch.split("\n"))) for batch in data.split("\n\n")]
     return sum(i for i, (le, ri) in enumerate(pairs, 1) if cmp_distress(le, ri) < 0)
 
 
-def part2(data: str, dividers: tuple):
+def part2(data: str, dividers: tuple) -> int:
     packets = sorted(list(map(eval, filter(bool, data.split('\n')))) + list(dividers), key=cmp_to_key(cmp_distress))
     return math.prod(packets.index(d) + 1 for d in dividers)
 

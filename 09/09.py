@@ -1,7 +1,7 @@
 from timing_util import print_elapsed, timestamp_nano
 
 
-def part12(instructions, n_knots: int = 9) -> tuple[int, int]:
+def part12(instructions: list[tuple[str, int]], n_knots: int = 9) -> tuple[int, int]:
     def sign(x: int) -> int:
         if x > 0:
             return 1

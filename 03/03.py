@@ -15,7 +15,6 @@ def part1(data: list[str]) -> int:
         char = (set(line[:middle]) & set(line[middle:])).pop()
 
         s += score(char)
-
     return s
 
 

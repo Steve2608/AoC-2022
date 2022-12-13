@@ -29,7 +29,7 @@ class Monkey:
                 return worry * num 
 
 
-def parse_monkeys(path: str):
+def parse_monkeys(path: str) -> list[Monkey]:
     with open(path) as in_file:
         content = in_file.read()
 
