@@ -1,5 +1,6 @@
 from collections import defaultdict
-from time import perf_counter_ns as timestamp_nano
+
+from timing_util import timestamp_nano, print_elapsed
 
 
 def file_system(path: str) -> dict[str, int]:
@@ -39,5 +40,4 @@ if __name__ == '__main__':
     p2 = min(s for s in sizes.values() if s >= min_free)
     print(f'part2: {p2}')
 
-    end = timestamp_nano()
-    print(f'time: {(end - start) / 1000:.3f}µs')
+    print_elapsed(start)

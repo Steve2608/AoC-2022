@@ -1,4 +1,4 @@
-from time import perf_counter_ns as timestamp_nano
+from timing_util import timestamp_nano, print_elapsed
 
 if __name__ == '__main__':
     start = timestamp_nano()
@@ -9,5 +9,4 @@ if __name__ == '__main__':
     print(f'part1: {data[0]}')
     print(f'part2: {sum(data)}')
 
-    end = timestamp_nano()
-    print(f'time: {(end - start) / 1000:.3f}µs')
+    print_elapsed(start)

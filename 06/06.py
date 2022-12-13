@@ -1,4 +1,4 @@
-from time import perf_counter_ns as timestamp_nano
+from timing_util import timestamp_nano, print_elapsed
 
 
 def solve(data: str, n_distinct: int, offset: int = 0) -> int:
@@ -18,5 +18,4 @@ if __name__ == '__main__':
     print(f'part1: {p1}')
     print(f'part2: {solve(data, 14, p1 - 4)}')
 
-    end = timestamp_nano()
-    print(f'time: {(end - start) / 1000:.3f}µs')
+    print_elapsed(start)

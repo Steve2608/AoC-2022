@@ -4,7 +4,8 @@ import re
 from copy import deepcopy
 from dataclasses import dataclass
 from collections import deque
-from time import perf_counter_ns as timestamp_nano
+
+from timing_util import timestamp_nano, print_elapsed
 
 
 @dataclass(frozen=True, slots=True, repr=False, eq=False, order=False, unsafe_hash=False)
@@ -103,5 +104,4 @@ if __name__ == '__main__':
     print(f'part1: {part1(deepcopy(monkeys), 20, worry_decay=3)}')
     print(f'part2: {part2(deepcopy(monkeys), 10_000)}')
 
-    end = timestamp_nano()
-    print(f'time: {(end - start) / 1e6:.3f}ms')
+    print_elapsed(start)

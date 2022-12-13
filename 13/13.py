@@ -1,6 +1,7 @@
 import math
 from functools import cmp_to_key
-from time import perf_counter_ns as timestamp_nano
+
+from timing_util import timestamp_nano, print_elapsed
 
 
 def cmp_distress(left, right):
@@ -44,5 +45,4 @@ if __name__ == '__main__':
     print(f'part1: {part1(data)}')
     print(f'part2: {part2(data, dividers=([[6]], [[2]]))}')
 
-    end = timestamp_nano()
-    print(f'time: {(end - start) / 1e6:.3f}ms')
+    print_elapsed(start)

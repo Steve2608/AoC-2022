@@ -1,5 +1,6 @@
-from time import perf_counter_ns as timestamp_nano
 from ctypes import *
+
+from timing_util import timestamp_nano, print_elapsed
 
 if __name__ == '__main__':
     start = timestamp_nano()
@@ -26,5 +27,4 @@ if __name__ == '__main__':
     p2 = solve(c_data, c_data_len, c_size_t(14), c_p1)
     print(f'part2: {p2}')
 
-    end = timestamp_nano()
-    print(f'time: {(end - start) / 1000:.3f}µs')
+    print_elapsed(start)
