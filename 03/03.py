@@ -15,7 +15,7 @@ def part1(data: list[str]) -> int:
         char = (set(line[:middle]) & set(line[middle:])).pop()
 
         s += score(char)
-        
+
     return s
 
 
@@ -23,7 +23,7 @@ def part2(data: list[str]) -> int:
     s = 0
     for i in range(len(data) // 3):
         group = data[i*3:(i+1) * 3]
-        common_badge = (set(group[0]) & set(group[1]) & set(group[2])).pop() 
+        common_badge = (set(group[0]) & set(group[1]) & set(group[2])).pop()
 
         s += score(common_badge)
     return s
