@@ -1,19 +1,17 @@
 import math
 from functools import cmp_to_key
 
-from timing_util import timestamp_nano, print_elapsed
+from timing_util import print_elapsed, timestamp_nano
 
 
 def cmp_distress(left, right):
-    if isinstance(left, int):
-        # both are integers, return integer difference
-        if isinstance(right, int):
-            return left - right
+    # both are integers, return integer difference
+    if isinstance(left, int) and isinstance(right, int):
+        return left - right
 
-        # right is list but left isn't
+    if not isinstance(left, list):
         left = [left]
-    else:
-        # left is list but right isn't
+    if not isinstance(right, list):
         right = [right]
 
     # (now) both are lists
@@ -32,8 +30,8 @@ def part1(data: str):
 
 
 def part2(data: str, dividers: tuple):
-    signals = sorted(list(map(eval, filter(bool, data.split('\n')))) + list(dividers), key=cmp_to_key(cmp_distress))
-    return math.prod(signals.index(d) + 1 for d in dividers)
+    packets = sorted(list(map(eval, filter(bool, data.split('\n')))) + list(dividers), key=cmp_to_key(cmp_distress))
+    return math.prod(packets.index(d) + 1 for d in dividers)
 
 
 if __name__ == '__main__':
