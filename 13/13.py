@@ -31,10 +31,7 @@ def part1(data: str):
 
 
 def part2(data: str, dividers: tuple):
-    signals = sorted(
-        list(map(eval, filter(bool, data.split('\n')))) + list(dividers),
-        key=cmp_to_key(cmp_distress)
-    )
+    signals = sorted(list(map(eval, filter(bool, data.split('\n')))) + list(dividers), key=cmp_to_key(cmp_distress))
     return math.prod(signals.index(d) + 1 for d in dividers)
 
 

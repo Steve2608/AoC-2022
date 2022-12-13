@@ -37,7 +37,7 @@ if __name__ == '__main__':
         initial = initial.split('\n')[:-1]
         for line in initial[::-1]:
             for i in range(N_STACKS):
-                if (char := line[1 + i*4]) != ' ':
+                if (char := line[1 + i * 4]) != ' ':
                     data[i] += char
 
         instructions = [tuple(map(int, line.split(' ')[1::2])) for line in instructions.split('\n')]

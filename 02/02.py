@@ -12,7 +12,7 @@ def part1(data: list[list[str]]) -> int:
             score += 6
         elif ord(opp) + diff == ord(you):
             score += 3
-            
+
         score += ord(you) - offset
     return score
 
@@ -20,16 +20,16 @@ def part1(data: list[list[str]]) -> int:
 def part2(data: list[list[str]]) -> int:
     score = 0
     for opp, you in data:
-        if you == 'X': # win
+        if you == 'X':  # win
             if opp == 'A':
                 score += 3
             elif opp == 'B':
                 score += 1
             else:
                 score += 2
-        elif you == 'Y': # draw
+        elif you == 'Y':  # draw
             score += 3 + (ord(opp) - ord('A') + 1)
-        else: # loss
+        else:  # loss
             score += 6
             if opp == 'A':
                 score += 2
@@ -51,4 +51,3 @@ if __name__ == '__main__':
 
     end = timestamp_nano()
     print(f'time: {(end - start) / 1000:.3f}µs')
- 

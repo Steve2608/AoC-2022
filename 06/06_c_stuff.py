@@ -1,7 +1,6 @@
 from time import perf_counter_ns as timestamp_nano
 from ctypes import *
 
-
 if __name__ == '__main__':
     start = timestamp_nano()
 

@@ -74,7 +74,7 @@ def part1(monkeys: list[Monkey], rounds: int, worry_decay: int = 0) -> int:
                     monkeys[monkey.true_target].items.append(worry)
                 else:
                     monkeys[monkey.false_target].items.append(worry)
-                
+
     return math.prod(sorted(inter_count)[-2:])
 
 
@@ -91,7 +91,7 @@ def part2(monkeys: list[Monkey], rounds: int) -> int:
                     monkeys[monkey.true_target].items.append(worry)
                 else:
                     monkeys[monkey.false_target].items.append(worry)
-                
+
     return math.prod(sorted(inter_count)[-2:])
 
 
