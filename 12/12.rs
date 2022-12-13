@@ -71,8 +71,7 @@ fn part1(map: &[Vec<char>], start: (Coord, Coord), end: (Coord, Coord)) -> usize
 
     bfs(map, &mut visited, &mut distances, &mut fringe);
 
-    let height: &Height = distances.get(&end).or(Some(&Height::MAX)).unwrap();
-    *height as usize
+    (*distances.get(&end).unwrap_or(&Height::MAX)) as usize
 }
 
 fn height(map: &[Vec<char>], idx: (Coord, Coord)) -> usize {
