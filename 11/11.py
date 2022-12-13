@@ -1,11 +1,11 @@
 import dataclasses
 import math
 import re
+from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
-from collections import deque
 
-from timing_util import timestamp_nano, print_elapsed
+from timing_util import print_elapsed, timestamp_nano
 
 
 @dataclass(frozen=True, slots=True, repr=False, eq=False, order=False, unsafe_hash=False)

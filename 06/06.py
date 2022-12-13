@@ -1,4 +1,4 @@
-from timing_util import timestamp_nano, print_elapsed
+from timing_util import print_elapsed, timestamp_nano
 
 
 def solve(data: str, n_distinct: int, offset: int = 0) -> int:

@@ -1,4 +1,4 @@
-from timing_util import timestamp_nano, print_elapsed
+from timing_util import print_elapsed, timestamp_nano
 
 
 def part1(instructions: list[str]) -> int:

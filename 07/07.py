@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from timing_util import timestamp_nano, print_elapsed
+from timing_util import print_elapsed, timestamp_nano
 
 
 def file_system(path: str) -> dict[str, int]:

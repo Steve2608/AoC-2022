@@ -1,7 +1,7 @@
 from collections import deque
 from typing import TypeAlias
-from timing_util import timestamp_nano, print_elapsed
 
+from timing_util import print_elapsed, timestamp_nano
 
 Coord: TypeAlias = tuple[float, float]
 
