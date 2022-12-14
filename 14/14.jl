@@ -68,16 +68,21 @@ end
 
 function part2(barriers)::Int
     grid, spawn = init_grid(barriers)
+    # one row at the bottom
     grid = vcat(grid, fill('.', (1, size(grid, 2))))
 
     while size(grid, 1) + 1 > size(grid, 2) / 2
         if spawn[2] < size(grid, 2) / 2
+            # column to the left of spawn
             grid = hcat(fill('.', (size(grid, 1), 1)), grid)
             spawn = spawn[1], spawn[2] + 1
         else
+            # column to the right of spawn
             grid = hcat(grid, fill('.', (size(grid, 1), 1)))
         end
     end
+
+    # bottomless pit now has a bottom
     grid = vcat(grid, fill('#', (1, size(grid, 2))))
 
     n_sand = 0
@@ -98,6 +103,7 @@ function part2(barriers)::Int
 
         grid[s_ud, s_lr] = 'O'
         n_sand += 1
+
         # filled up all the way to spawn
         if spawn == (s_ud, s_lr)
             break

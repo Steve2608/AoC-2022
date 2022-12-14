@@ -95,7 +95,8 @@ def part2(data: list[list[Coord]]) -> int:
 
         grid[s_ud][s_lr] = 'O'
         n_sand += 1
-        # fell off the map
+
+        # filled up all the way to spawn
         if (s_ud, s_lr) == spawn:
             break
 
