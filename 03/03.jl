@@ -20,13 +20,14 @@ part2(data)::Int = sum(map(
     ) for i in 1:3:length(data)
 ))
 
-get_data() = open("03/input.txt") do in_file
-    split(read(in_file, String), "\n")
-end
+get_data(path::String) =
+    open(path) do in_file
+        split(read(in_file, String), "\n")
+    end
 
 start = timestamp_nano()
 
-data = get_data()
+data = get_data("03/input.txt")
 
 println("part1: ", part1(data))
 println("part2: ", part2(data))

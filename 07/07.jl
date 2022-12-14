@@ -72,7 +72,7 @@ function part2(root, disk_space_total, free_space_min)::Int
             if to_free <= (s = get_size(cwd)) < optim
                 optim = s
             end
-            
+
             for c in values(cwd.children)
                 find_min(c)
             end
@@ -80,19 +80,20 @@ function part2(root, disk_space_total, free_space_min)::Int
 
         return optim
     end
-    
+
     to_free = free_space_min - (disk_space_total - (s = get_size(root)))
     optim = s
     return find_min(root)
 end
 
-get_data() = open("07/input.txt") do in_file
-    split(read(in_file, String), "\n")
-end
+get_data(path::String) =
+    open(path) do in_file
+        split(read(in_file, String), "\n")
+    end
 
 start = timestamp_nano()
 
-lines = get_data()
+lines = get_data("07/input.txt")
 
 root = file_system(lines)
 println("part1: ", part1(root, Int(100e3)))

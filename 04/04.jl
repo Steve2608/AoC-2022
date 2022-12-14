@@ -10,16 +10,17 @@ part2(data)::Int = sum(
     for (start1, end1, start2, end2) in data
 )
 
-get_data() = open("04/input.txt") do in_file
-    [
-        parse.(Int, match(r"(\d+)-(\d+),(\d+)-(\d+)", line).captures)
-        for line in split(read(in_file, String), "\n")
-    ]
-end
+get_data(path::String) =
+    open(path) do in_file
+        [
+            parse.(Int, match(r"(\d+)-(\d+),(\d+)-(\d+)", line).captures)
+            for line in split(read(in_file, String), "\n")
+        ]
+    end
 
 start = timestamp_nano()
 
-data = get_data()
+data = get_data("04/input.txt")
 
 println("part1: ", part1(data))
 println("part2: ", part2(data))
