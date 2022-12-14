@@ -42,16 +42,17 @@ function part1(barriers)::Int
     n_sand = 0
     while true
         s_ud, s_lr = spawn
-        while s_ud < size(grid, 1) &&
-            (grid[s_ud+1, s_lr] == '.' || grid[s_ud+1, s_lr-1] == '.' || grid[s_ud+1, s_lr+1] == '.')
+        while s_ud < size(grid, 1)
             if grid[s_ud+1, s_lr] == '.'
                 s_ud += 1
             elseif grid[s_ud+1, s_lr-1] == '.'
                 s_ud += 1
                 s_lr -= 1
-            else
+            elseif grid[s_ud+1, s_lr+1] == '.'
                 s_ud += 1
                 s_lr += 1
+            else
+                break
             end
         end
 
@@ -68,36 +69,27 @@ end
 
 function part2(barriers)::Int
     grid, spawn = init_grid(barriers)
-    # one row at the bottom
-    grid = vcat(grid, fill('.', (1, size(grid, 2))))
 
-    while size(grid, 2) < size(grid, 1) * 2 + 1
-        if spawn[2] <= size(grid, 1)
-            # column to the left of spawn
-            grid = hcat(fill('.', (size(grid, 1), 1)), grid)
-            spawn = spawn[1], spawn[2] + 1
-        else
-            # column to the right of spawn
-            grid = hcat(grid, fill('.', (size(grid, 1), 1)))
-        end
-    end
-
-    # bottomless pit now has a bottom
-    grid = vcat(grid, fill('#', (1, size(grid, 2))))
+    grid_new = fill('.', (size(grid, 1) + 2, (size(grid, 1) + 2) * 2 + 1))
+    grid_new[end, 1:end] .= '#'
+    grid_new[1:size(grid, 1), size(grid_new, 1)-spawn[2]:size(grid_new, 1)+(size(grid, 2)-spawn[2]-1)] = grid
+    grid = grid_new
+    spawn = spawn[1], size(grid, 1)
 
     n_sand = 0
     while true
         s_ud, s_lr = spawn
-        while s_ud + 1 < size(grid, 1) &&
-            (grid[s_ud+1, s_lr] == '.' || grid[s_ud+1, s_lr-1] == '.' || grid[s_ud+1, s_lr+1] == '.')
+        while s_ud + 1 < size(grid, 1)
             if grid[s_ud+1, s_lr] == '.'
                 s_ud += 1
             elseif grid[s_ud+1, s_lr-1] == '.'
                 s_ud += 1
                 s_lr -= 1
-            else
+            elseif grid[s_ud+1, s_lr+1] == '.'
                 s_ud += 1
                 s_lr += 1
+            else
+                break
             end
         end
 

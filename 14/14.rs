@@ -75,19 +75,17 @@ fn part1(data: &[Vec<TCoord>]) -> usize {
     loop {
         let mut s_ud = spawn.0;
         let mut s_lr = spawn.1;
-        while s_ud + 1 < grid.len()
-            && grid[s_ud + 1][s_lr - 1..=s_lr + 1]
-                .iter()
-                .any(|&v| v == '.')
-        {
+        while s_ud + 1 < grid.len() {
             if grid[s_ud + 1][s_lr] == '.' {
                 s_ud += 1;
             } else if grid[s_ud + 1][s_lr - 1] == '.' {
                 s_ud += 1;
                 s_lr -= 1;
-            } else {
+            } else if grid[s_ud + 1][s_lr + 1] == '.' {
                 s_ud += 1;
                 s_lr += 1;
+            } else {
+                break;
             }
         }
 
@@ -107,20 +105,15 @@ fn part2(data: &[Vec<TCoord>]) -> usize {
     // one row at the bottom
     grid.push(vec!['.'; grid[0].len()]);
 
-    while grid[0].len() < grid.len() * 2 + 1{
-        if spawn.1 <= grid.len() {
-            // column to the left of spawn
-            for row in &mut grid {
-                row.insert(0, '.');
-            }
-            spawn.1 += 1;
-        } else {
-            // column to the right of spawn
-            for row in &mut grid {
-                row.push('.');
-            }
-        }
+    let offset_left = grid.len() - spawn.1;
+    let left_buf = vec!['.'; offset_left];
+    let offset_right = grid.len() - (grid[0].len() - spawn.1);
+    let right_buf = vec!['.'; offset_right];
+    for row in &mut grid {
+        row.splice(0..0, left_buf.clone());
+        row.extend(&right_buf);
     }
+    spawn.1 = grid.len();
 
     // bottomless pit now has a bottom
     grid.push(vec!['#'; grid[0].len()]);
@@ -129,19 +122,17 @@ fn part2(data: &[Vec<TCoord>]) -> usize {
     loop {
         let mut s_ud = spawn.0;
         let mut s_lr = spawn.1;
-        while s_ud + 2 < grid.len()
-            && grid[s_ud + 1][s_lr - 1..=s_lr + 1]
-                .iter()
-                .any(|&v| v == '.')
-        {
+        while s_ud + 2 < grid.len() {
             if grid[s_ud + 1][s_lr] == '.' {
                 s_ud += 1;
             } else if grid[s_ud + 1][s_lr - 1] == '.' {
                 s_ud += 1;
                 s_lr -= 1;
-            } else {
+            } else if grid[s_ud + 1][s_lr + 1] == '.' {
                 s_ud += 1;
                 s_lr += 1;
+            } else {
+                break;
             }
         }
 

@@ -41,15 +41,17 @@ def part1(data: list[list[Coord]]) -> int:
     n_sand = 0
     while True:
         s_ud, s_lr = spawn
-        while s_ud + 1 < len(grid) and any(x == '.' for x in grid[s_ud + 1][s_lr - 1:s_lr + 2]):
+        while s_ud + 1 < len(grid):
             if grid[s_ud + 1][s_lr] == '.':
                 s_ud += 1
             elif grid[s_ud + 1][s_lr - 1] == '.':
                 s_ud += 1
                 s_lr -= 1
-            else:
+            elif grid[s_ud + 1][s_lr + 1] == '.':
                 s_ud += 1
                 s_lr += 1
+            else:
+                break
 
         # fell off the map
         if s_ud >= len(grid) - 1:
@@ -66,16 +68,14 @@ def part2(data: list[list[Coord]]) -> int:
     # one row at the bottom
     grid.append(['.'] * len(grid[0]))
 
-    while len(grid[0]) < len(grid) * 2 + 1:
-        if spawn[1] <= len(grid):
-            # column to the left of spawn
-            for row in grid:
-                row.insert(0, '.')
-            spawn = spawn[0], spawn[1] + 1
-        else:
-            # column to the right of spawn
-            for row in grid:
-                row.append('.')
+    offset_left = len(grid) - spawn[1]
+    left_buf = ['.'] * offset_left
+    offset_right = len(grid) - (len(grid[0]) - spawn[1])
+    right_buf = ['.'] * offset_right
+
+    for i in range(len(grid)):
+        grid[i] = left_buf + grid[i] + right_buf
+    spawn = spawn[0], len(grid)
 
     # bottomless pit now has a bottom
     grid.append(['#'] * len(grid[0]))
@@ -83,15 +83,17 @@ def part2(data: list[list[Coord]]) -> int:
     n_sand = 0
     while True:
         s_ud, s_lr = spawn
-        while s_ud + 2 < len(grid) and any(x == '.' for x in grid[s_ud + 1][s_lr - 1:s_lr + 2]):
+        while s_ud + 2 < len(grid):
             if grid[s_ud + 1][s_lr] == '.':
                 s_ud += 1
             elif grid[s_ud + 1][s_lr - 1] == '.':
                 s_ud += 1
                 s_lr -= 1
-            else:
+            elif grid[s_ud + 1][s_lr + 1] == '.':
                 s_ud += 1
                 s_lr += 1
+            else:
+                break
 
         grid[s_ud][s_lr] = 'O'
         n_sand += 1
