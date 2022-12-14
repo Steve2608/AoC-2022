@@ -14,7 +14,6 @@ function init_grid(barriers)
         end
     end
 
-    min_lr, max_lr, min_ud, max_ud
     grid = fill('.', (max_ud - min_ud + 1, max_lr - min_lr + 1 + 2))
     off_ud = min_ud - 1
     off_lr = min_lr - 2
@@ -97,14 +96,11 @@ function part2(barriers)::Int
             end
         end
 
+        grid[s_ud, s_lr] = 'O'
+        n_sand += 1
         # filled up all the way to spawn
         if spawn == (s_ud, s_lr)
-            grid[s_ud, s_lr] = 'O'
-            n_sand += 1
             break
-        else
-            grid[s_ud, s_lr] = 'O'
-            n_sand += 1
         end
     end
     n_sand
