@@ -107,8 +107,8 @@ fn part2(data: &[Vec<TCoord>]) -> usize {
     // one row at the bottom
     grid.push(vec!['.'; grid[0].len()]);
 
-    while grid.len() > grid[0].len() / 2 {
-        if spawn.1 < grid[0].len() / 2 {
+    while grid[0].len() < grid.len() * 2 + 1{
+        if spawn.1 <= grid.len() {
             // column to the left of spawn
             for row in &mut grid {
                 row.insert(0, '.');

@@ -66,8 +66,8 @@ def part2(data: list[list[Coord]]) -> int:
     # one row at the bottom
     grid.append(['.'] * len(grid[0]))
 
-    while len(grid) > len(grid[0]) // 2:
-        if spawn[1] < len(grid[0]) / 2:
+    while len(grid[0]) < len(grid) * 2 + 1:
+        if spawn[1] <= len(grid):
             # column to the left of spawn
             for row in grid:
                 row.insert(0, '.')

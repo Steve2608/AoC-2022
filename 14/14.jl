@@ -71,8 +71,8 @@ function part2(barriers)::Int
     # one row at the bottom
     grid = vcat(grid, fill('.', (1, size(grid, 2))))
 
-    while size(grid, 1) + 1 > size(grid, 2) / 2
-        if spawn[2] < size(grid, 2) / 2
+    while size(grid, 2) < size(grid, 1) * 2 + 1
+        if spawn[2] <= size(grid, 1)
             # column to the left of spawn
             grid = hcat(fill('.', (size(grid, 1), 1)), grid)
             spawn = spawn[1], spawn[2] + 1
