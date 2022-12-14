@@ -69,38 +69,46 @@ fn init_grid(data: &[Vec<TCoord>]) -> (Vec<Vec<char>>, TCoord) {
 }
 
 fn part1(data: &[Vec<TCoord>]) -> usize {
-    let (mut grid, spawn) = init_grid(data);
-
-    let mut n_sand = 0;
-    loop {
-        let mut s_ud = spawn.0;
-        let mut s_lr = spawn.1;
-        while s_ud + 1 < grid.len() {
-            if grid[s_ud + 1][s_lr] == '.' {
-                s_ud += 1;
-            } else if grid[s_ud + 1][s_lr - 1] == '.' {
-                s_ud += 1;
-                s_lr -= 1;
-            } else if grid[s_ud + 1][s_lr + 1] == '.' {
-                s_ud += 1;
-                s_lr += 1;
-            } else {
-                break;
-            }
+    fn dfs(grid: &mut Vec<Vec<char>>, n_sand: &mut usize, ud: usize, lr: usize) -> bool {
+        // falling off the map
+        if ud == grid.len() - 1 && grid[ud][lr] != '#' {
+            return false;
+        }
+        if grid[ud][lr] != '.' {
+            return true;
         }
 
-        // fell off the map
-        if s_ud >= grid.len() - 1 {
-            break;
-        } else {
-            grid[s_ud][s_lr] = 'O';
-            n_sand += 1;
+        // early stopping
+        if !dfs(grid, n_sand, ud + 1, lr)
+            || !dfs(grid, n_sand, ud + 1, lr - 1)
+            || !dfs(grid, n_sand, ud + 1, lr + 1)
+        {
+            return false;
         }
+
+        grid[ud][lr] = 'O';
+        *n_sand += 1;
+        return true;
     }
+    let (mut grid, spawn) = init_grid(data);
+    let mut n_sand = 0;
+    dfs(&mut grid, &mut n_sand, spawn.0, spawn.1);
     n_sand
 }
 
 fn part2(data: &[Vec<TCoord>]) -> usize {
+    fn dfs(grid: &mut Vec<Vec<char>>, n_sand: &mut usize, ud: usize, lr: usize) {
+        if ud >= grid.len() - 1 || grid[ud][lr] != '.' {
+            return;
+        }
+    
+        dfs(grid, n_sand, ud + 1, lr);
+        dfs(grid, n_sand, ud + 1, lr - 1);
+        dfs(grid, n_sand, ud + 1, lr + 1);
+    
+        grid[ud][lr] = 'O';
+        *n_sand += 1;
+    }
     let (mut grid, mut spawn) = init_grid(data);
     // one row at the bottom
     grid.push(vec!['.'; grid[0].len()]);
@@ -119,30 +127,8 @@ fn part2(data: &[Vec<TCoord>]) -> usize {
     grid.push(vec!['#'; grid[0].len()]);
 
     let mut n_sand = 0;
-    loop {
-        let mut s_ud = spawn.0;
-        let mut s_lr = spawn.1;
-        while s_ud + 2 < grid.len() {
-            if grid[s_ud + 1][s_lr] == '.' {
-                s_ud += 1;
-            } else if grid[s_ud + 1][s_lr - 1] == '.' {
-                s_ud += 1;
-                s_lr -= 1;
-            } else if grid[s_ud + 1][s_lr + 1] == '.' {
-                s_ud += 1;
-                s_lr += 1;
-            } else {
-                break;
-            }
-        }
-
-        grid[s_ud][s_lr] = 'O';
-        n_sand += 1;
-
-        // filled up all the way to spawn
-        if s_ud == spawn.0 && s_lr == spawn.1 {
-            break;
-        }
-    }
+    dfs(&mut grid, &mut n_sand, spawn.0, spawn.1);
     n_sand
 }
+
+

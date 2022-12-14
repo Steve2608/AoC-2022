@@ -30,40 +30,46 @@ def init_grid(data: list[list[Coord]]) -> tuple[list[list[str]], Coord]:
             x, y = ud, lr
 
     spawn_ud, spawn_lr = 0, 500 - off_lr
-    grid[spawn_ud][spawn_lr] = '+'
-
     return grid, (spawn_ud, spawn_lr)
 
 
 def part1(data: list[list[Coord]]) -> int:
+
+    def dfs(ud: int, lr: int) -> bool:
+        if ud == len(grid) - 1 and grid[ud][lr] != '#':
+            return False
+
+        if grid[ud][lr] != '.':
+            return True
+
+        if not dfs(ud + 1, lr) or not dfs(ud + 1, lr - 1) or not dfs(ud + 1, lr + 1):
+            return False
+
+        grid[ud][lr] = 'O'
+        nonlocal n_sand
+        n_sand += 1
+        return True
+
     grid, spawn = init_grid(data)
-
     n_sand = 0
-    while True:
-        s_ud, s_lr = spawn
-        while s_ud + 1 < len(grid):
-            if grid[s_ud + 1][s_lr] == '.':
-                s_ud += 1
-            elif grid[s_ud + 1][s_lr - 1] == '.':
-                s_ud += 1
-                s_lr -= 1
-            elif grid[s_ud + 1][s_lr + 1] == '.':
-                s_ud += 1
-                s_lr += 1
-            else:
-                break
-
-        # fell off the map
-        if s_ud >= len(grid) - 1:
-            break
-        else:
-            grid[s_ud][s_lr] = 'O'
-            n_sand += 1
-
+    dfs(*spawn)
     return n_sand
 
 
 def part2(data: list[list[Coord]]) -> int:
+
+    def dfs(ud: int, lr: int):
+        if ud >= len(grid) - 1 or grid[ud][lr] != '.':
+            return
+
+        dfs(ud + 1, lr)
+        dfs(ud + 1, lr - 1)
+        dfs(ud + 1, lr + 1)
+
+        grid[ud][lr] = 'O'
+        nonlocal n_sand
+        n_sand += 1
+
     grid, spawn = init_grid(data)
     # one row at the bottom
     grid.append(['.'] * len(grid[0]))
@@ -81,27 +87,7 @@ def part2(data: list[list[Coord]]) -> int:
     grid.append(['#'] * len(grid[0]))
 
     n_sand = 0
-    while True:
-        s_ud, s_lr = spawn
-        while s_ud + 2 < len(grid):
-            if grid[s_ud + 1][s_lr] == '.':
-                s_ud += 1
-            elif grid[s_ud + 1][s_lr - 1] == '.':
-                s_ud += 1
-                s_lr -= 1
-            elif grid[s_ud + 1][s_lr + 1] == '.':
-                s_ud += 1
-                s_lr += 1
-            else:
-                break
-
-        grid[s_ud][s_lr] = 'O'
-        n_sand += 1
-
-        # filled up all the way to spawn
-        if (s_ud, s_lr) == spawn:
-            break
-
+    dfs(*spawn)
     return n_sand
 
 
