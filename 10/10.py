@@ -1,6 +1,10 @@
 from timing_util import print_elapsed, timestamp_nano
 
 
+def get_data(content: str) -> list[str]:
+    return content.splitlines()
+
+
 def part1(instructions: list[str]) -> int:
     def sig_stren() -> int:
         if (i - 20) % 40 == 0:
@@ -63,7 +67,7 @@ if __name__ == '__main__':
     start = timestamp_nano()
 
     with open('10/input.txt') as in_file:
-        data = [line.rstrip() for line in in_file]
+        data = get_data(in_file.read())
 
     print(f'part1: {part1(data)}')
     print(f'part2:\n{part2(data, crt_width=40)}')

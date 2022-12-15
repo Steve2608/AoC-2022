@@ -1,6 +1,10 @@
 from timing_util import print_elapsed, timestamp_nano
 
 
+def get_data(content: str) -> list[list[int]]:
+    return [list(map(int, line)) for line in content.splitlines()]
+
+
 def part1(grid: list[list[int]]) -> int:
     # no double counting on corners
     circumference = len(grid) * 2 + len(grid[0]) * 2 - 4
@@ -18,16 +22,16 @@ def part1(grid: list[list[int]]) -> int:
 
 def part2(grid: list[list[int]]) -> int:
     scenic_score = 0
-    for i, row in enumerate(grid):
-        for j, tree in enumerate(row):
+    for i, row in enumerate(grid[1:-1], 1):
+        for j, tree in enumerate(row[1:-1], 1):
             score_up = 1
-            for r in grid[i - 1 - len(grid):-len(grid):-1]:
+            for r in grid[1:i][::-1]:
                 if tree <= r[j]:
                     break
                 score_up += 1
 
             score_left = 1
-            for t in row[j - 1 - len(row):-len(row):-1]:
+            for t in row[1:j][::-1]:
                 if tree <= t:
                     break
                 score_left += 1
@@ -52,7 +56,7 @@ if __name__ == '__main__':
     start = timestamp_nano()
 
     with open('08/input.txt') as in_file:
-        data = [list(map(int, line.removesuffix('\n'))) for line in in_file]
+        data = get_data(in_file.read())
 
     print(f'part1: {part1(data)}')
     print(f'part2: {part2(data)}')

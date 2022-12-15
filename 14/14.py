@@ -5,6 +5,10 @@ from timing_util import print_elapsed, timestamp_nano
 Coord: TypeAlias = tuple[int, int]
 
 
+def get_data(content: str) -> list[list[Coord]]:
+    return [[tuple(map(int, c.split(','))) for c in line.rstrip().split(' -> ')] for line in content.splitlines()]
+
+
 def show_grid(grid: list[list[str]]):
     print('\n'.join(''.join(elem for elem in row) for row in grid))
 
@@ -96,7 +100,7 @@ if __name__ == '__main__':
     start = timestamp_nano()
 
     with open('14/input.txt') as in_file:
-        data = [[tuple(map(int, c.split(','))) for c in line.rstrip().split(' -> ')] for line in in_file]
+        data = get_data(in_file.read())
 
     print(f'part1: {part1(data)}')
     print(f'part2: {part2(data)}')

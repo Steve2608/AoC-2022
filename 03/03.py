@@ -1,6 +1,10 @@
 from timing_util import print_elapsed, timestamp_nano
 
 
+def get_data(content: str) -> list[str]:
+    return content.splitlines()
+
+
 def score(char: str) -> int:
     if (o := ord(char)) <= ord('Z'):
         return 27 + (o - ord('A'))
@@ -32,7 +36,7 @@ if __name__ == '__main__':
     start = timestamp_nano()
 
     with open('03/input.txt') as in_file:
-        data = in_file.read().split('\n')
+        data = get_data(in_file.read())
 
     print(f'part1: {part1(data)}')
     print(f'part2: {part2(data)}')

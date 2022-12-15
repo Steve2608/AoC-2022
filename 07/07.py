@@ -3,41 +3,46 @@ from collections import defaultdict
 from timing_util import print_elapsed, timestamp_nano
 
 
-def file_system(path: str) -> dict[str, int]:
+def get_data(content: str) -> dict[str, int]:
     sizes = defaultdict(int)
     cwd = ['']
 
-    with open(path) as in_file:
-        for line in in_file:
-            match line.removesuffix('\n').split(' '):
-                case ['$', 'cd', '/']:
-                    cwd = ['/']
-                case ['$', 'cd', '..']:
-                    cwd = cwd[:-1]
-                case ['$', 'cd', target]:
-                    cwd.append(target)
-                case [num, _] if num.isdigit():
-                    s = int(num)
+    for line in content.splitlines():
+        match line.removesuffix('\n').split(' '):
+            case ['$', 'cd', '/']:
+                cwd = ['/']
+            case ['$', 'cd', '..']:
+                cwd = cwd[:-1]
+            case ['$', 'cd', target]:
+                cwd.append(target)
+            case [num, _] if num.isdigit():
+                s = int(num)
 
-                    pwd = '/'
+                pwd = '/'
+                sizes[pwd] += s
+                for part in cwd:
+                    pwd += part + '/'
                     sizes[pwd] += s
-                    for part in cwd:
-                        pwd += part + '/'
-                        sizes[pwd] += s
 
     return sizes
+
+
+def part1(sizes: dict[str, int]) -> int:
+    return sum(s for s in sizes.values() if s <= 100e3)
+
+
+def part2(sizes: dict[str, int]) -> int:
+    min_free = sizes['/'] - (70e6 - 30e6)
+    return min(s for s in sizes.values() if s >= min_free)
 
 
 if __name__ == '__main__':
     start = timestamp_nano()
 
-    sizes = file_system('07/input.txt')
+    with open('07/input.txt') as in_file:
+        sizes = get_data(in_file.read())
 
-    p1 = sum(s for s in sizes.values() if s <= 100e3)
-    print(f'part1: {p1}')
-
-    min_free = sizes['/'] - (70e6 - 30e6)
-    p2 = min(s for s in sizes.values() if s >= min_free)
-    print(f'part2: {p2}')
+    print(f'part1: {part1(sizes)}')
+    print(f'part2: {part2(sizes)}')
 
     print_elapsed(start)

@@ -6,20 +6,9 @@ from timing_util import print_elapsed, timestamp_nano
 Coord: TypeAlias = tuple[float, float]
 
 
-def height(grid: list[list[str]], idx: Coord) -> int:
-    match grid[idx[0]][idx[1]]:
-        case 'S':
-            return 0
-        case 'E':
-            return 26
-        case letter:
-            return ord(letter) - ord('a')
+def get_data(content: str) -> tuple[list[list[str]], Coord, list[Coord], Coord]:
+    grid = [list(line) for line in content.splitlines()]
 
-
-def parse_input(path: str) -> tuple[list[list[str]], Coord, list[Coord], Coord]:
-    with open(path) as in_file:
-        grid = [list(line.rstrip()) for line in in_file]
-    
     s, end = None, None
     strt = []
     for i, row in enumerate(grid):
@@ -39,6 +28,16 @@ def parse_input(path: str) -> tuple[list[list[str]], Coord, list[Coord], Coord]:
                         strt.append((i, j))
 
     return grid, s, strt, end
+
+
+def height(grid: list[list[str]], idx: Coord) -> int:
+    match grid[idx[0]][idx[1]]:
+        case 'S':
+            return 0
+        case 'E':
+            return 26
+        case letter:
+            return ord(letter) - ord('a')
 
 
 def bfs(
@@ -99,7 +98,8 @@ def part2(grid: list[list[str]], strt: list[Coord], end: Coord, best) -> int:
 if __name__ == '__main__':
     start = timestamp_nano()
 
-    grid, s, strt, end = parse_input('12/input.txt')
+    with open('12/input.txt') as in_file:
+        grid, s, strt, end = get_data(in_file.read())
 
     p1 = part1(grid, s, end)
     print(f'part1: {p1}')

@@ -31,10 +31,7 @@ class Monkey:
                     yield worry * num
 
 
-def parse_monkeys(path: str) -> list[Monkey]:
-    with open(path) as in_file:
-        content = in_file.read()
-
+def get_data(content: str) -> list[Monkey]:
     monkeys = []
     for block in content.split('\n\n'):
         # Monkey 0:
@@ -101,7 +98,8 @@ def part2(monkeys: list[Monkey], rounds: int) -> int:
 if __name__ == '__main__':
     start = timestamp_nano()
 
-    monkeys = parse_monkeys('11/input.txt')
+    with open('11/input.txt') as in_file:
+        monkeys = get_data(in_file.read())
 
     print(f'part1: {part1(deepcopy(monkeys), 20, worry_decay=3)}')
     print(f'part2: {part2(deepcopy(monkeys), 10_000)}')

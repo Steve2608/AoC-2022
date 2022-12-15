@@ -1,6 +1,10 @@
 from timing_util import print_elapsed, timestamp_nano
 
 
+def get_data(content: str) -> list[list[str]]:
+    return [game.split(' ') for game in content.splitlines()]
+
+
 def part1(data: list[list[str]]) -> int:
     diff = ord('X') - ord('A')
     wins = {('A', 'Y'), ('B', 'Z'), ('C', 'X')}
@@ -44,7 +48,7 @@ if __name__ == '__main__':
     start = timestamp_nano()
 
     with open('02/input.txt') as in_file:
-        data = [game.rstrip().split(' ') for game in in_file]
+        data = get_data(in_file.read())
 
     print(f'part1: {part1(data)}')
     print(f'part2: {part2(data)}')

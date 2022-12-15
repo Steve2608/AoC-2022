@@ -6,6 +6,17 @@ from timing_util import print_elapsed, timestamp_nano
 Coord: TypeAlias = tuple[int, int]
 
 
+def get_data(content: str) -> list[tuple[Coord, Coord]]:
+    data = [
+            tuple(
+                map(
+                    int,
+                    re.search(r'Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)',
+                              line).groups())) for line in content.splitlines()
+        ]
+    return [((l[0], l[1]), (l[2], l[3])) for l in data]
+
+
 def dist(a: Coord, b: Coord) -> int:
     return sum(abs(i - j) for i, j in zip(a, b))
 
@@ -71,7 +82,7 @@ def part1(data: list[tuple[Coord, Coord]], target_y: int) -> int:
     return n
 
 
-def part2(data: list[tuple[Coord, Coord]], min_x: int, min_y: int, max_x: int, max_y: int) -> int:
+def part2(data: list[tuple[Coord, Coord]], min_y: int, max_y: int) -> int:
 
     def simplify_ranges(ranges: list[tuple[int, int]]) -> int | None:
         # sorting ranges by start
@@ -101,16 +112,9 @@ if __name__ == '__main__':
     start = timestamp_nano()
 
     with open('15/input.txt') as in_file:
-        data = [
-            tuple(
-                map(
-                    int,
-                    re.search(r'Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)',
-                              line).groups())) for line in in_file
-        ]
-        data = [((l[0], l[1]), (l[2], l[3])) for l in data]
+        data = get_data(in_file.read())
 
     print(f'part1: {part1(data, 2_000_000)}')
-    print(f'part2: {part2(data, 0, 0, 4_000_000, 4_000_000)}')
+    print(f'part2: {part2(data, 0, 4_000_000)}')
 
     print_elapsed(start)

@@ -1,6 +1,10 @@
 from timing_util import print_elapsed, timestamp_nano
 
 
+def get_data(content: str) -> list[tuple[str, int]]:
+    return [(line[0], int(line[2:])) for line in content.splitlines()]
+
+
 def part12(instructions: list[tuple[str, int]], n_knots: int = 9) -> tuple[int, int]:
     def sign(x: int) -> int:
         if x > 0:
@@ -45,7 +49,7 @@ if __name__ == '__main__':
     start = timestamp_nano()
 
     with open('09/input.txt') as in_file:
-        data = [(line[0], int(line.removesuffix('\n')[2:])) for line in in_file]
+        data = get_data(in_file.read())
 
     p1, p2 = part12(data)
     print(f'part1: {p1}')
