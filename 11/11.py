@@ -4,6 +4,7 @@ import re
 from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass
+from typing import Iterator
 
 from timing_util import print_elapsed, timestamp_nano
 
@@ -17,16 +18,17 @@ class Monkey:
     true_target: int
     false_target: int
 
-    def __call__(self):
-        worry = self.items.popleft()
+    def __iter__(self) -> Iterator[int]:
+        while self.items:
+            worry = self.items.popleft()
 
-        match [self.operation, self.operand]:
-            case ['+', num]:
-                return worry + num
-            case ['*', -1]:
-                return worry * worry
-            case ['*', num]:
-                return worry * num 
+            match [self.operation, self.operand]:
+                case ['+', num]:
+                    yield worry + num
+                case ['*', -1]:
+                    yield worry * worry
+                case ['*', num]:
+                    yield worry * num
 
 
 def parse_monkeys(path: str) -> list[Monkey]:
@@ -69,8 +71,8 @@ def part1(monkeys: list[Monkey], rounds: int, worry_decay: int = 0) -> int:
     for _ in range(rounds):
         for i, monkey in enumerate(monkeys):
             inter_count[i] += len(monkey.items)
-            while monkey.items:
-                worry = monkey() // worry_decay
+            for worry in monkey:
+                worry //= worry_decay
                 if worry % monkey.div_by == 0:
                     monkeys[monkey.true_target].items.append(worry)
                 else:
@@ -86,8 +88,8 @@ def part2(monkeys: list[Monkey], rounds: int) -> int:
     for _ in range(rounds):
         for i, monkey in enumerate(monkeys):
             inter_count[i] += len(monkey.items)
-            while monkey.items:
-                worry = monkey() % lcm
+            for worry in monkey:
+                worry %= lcm
                 if worry % monkey.div_by == 0:
                     monkeys[monkey.true_target].items.append(worry)
                 else:
