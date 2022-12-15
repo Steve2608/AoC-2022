@@ -1,4 +1,3 @@
-use core::panic;
 use std::cmp::min;
 use std::collections::HashSet;
 use std::fs;
@@ -72,18 +71,23 @@ fn ranges(delts: &[(Coord, Coord, Coord)], target_y: Coord) -> Vec<TCoord> {
 }
 
 fn part1(data: &[(TCoord, TCoord)], target_y: Coord) -> Coord {
-    fn simplify_ranges(ranges: &mut [TCoord]) -> TCoord {
+    fn simplify_ranges(ranges: &mut [TCoord]) -> Vec<TCoord> {
         ranges.sort();
-        let (a1, mut a2) = ranges[0];
-        for &(b1, b2) in ranges.iter().skip(1) {
-            // ranges are assumed to simplify down to a single one for part1
-            if (a1 <= b1 && b1 <= a2 && a2 <= b2) || (a2 + 1 == b1) {
-                a2 = b2;
-            } else if !(a1 <= b1 && b2 <= a2) {
-                panic!();
+        let (mut start, mut end) = ranges[0];
+        let mut rngs: Vec<TCoord> = vec![];
+        for &(s, e) in ranges.iter().skip(1) {
+            if (start <= s && s <= end && end <= e) || (end + 1 == s) {
+                end = e;
+            } else if !(start <= s && e <= end) {
+                rngs.push((start, end));
+                // found new range
+                (start, end) = (s, e);
             }
         }
-        (a1, a2)
+        if rngs.is_empty() || rngs[rngs.len() - 1] != (start, end) {
+            rngs.push((start, end));
+        }
+        rngs
     }
 
     let mut sensors: HashSet<TCoord> = HashSet::new();
@@ -96,19 +100,19 @@ fn part1(data: &[(TCoord, TCoord)], target_y: Coord) -> Coord {
     let delts: Vec<(Coord, Coord, Coord)> = deltoids(data);
     let mut rngs: Vec<TCoord> = ranges(&delts, target_y);
 
-    let (min_, max_) = simplify_ranges(&mut rngs);
-    let mut n = max_ - min_ + 1;
+    let r: Vec<TCoord> = simplify_ranges(&mut rngs);
+    let mut n: Coord = r.iter().map(|&(a, b)| b - a + 1).sum();
 
-    for &(sx, sy) in sensors.iter() {
-        if sy == target_y {
+    for &(sx, _) in sensors.iter().filter(|&&(_, sy)| sy == target_y) {
+        for &(min_, max_) in r.iter() {
             if min_ <= sx && sx <= max_ {
                 n -= 1;
             }
         }
     }
 
-    for &(bx, by) in beacons.iter() {
-        if by == target_y {
+    for &(bx, _) in beacons.iter().filter(|&&(_, sy)| sy == target_y) {
+        for &(min_, max_) in r.iter() {
             if min_ <= bx && bx <= max_ {
                 n -= 1;
             }
