@@ -130,5 +130,3 @@ fn part2(data: &[Vec<TCoord>]) -> usize {
     dfs(&mut grid, &mut n_sand, spawn.0, spawn.1);
     n_sand
 }
-
-
