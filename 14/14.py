@@ -1,4 +1,5 @@
 from typing import TypeAlias
+
 from timing_util import print_elapsed, timestamp_nano
 
 Coord: TypeAlias = tuple[int, int]
