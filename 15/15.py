@@ -43,18 +43,23 @@ def ranges(delts: list[tuple[int, int, int]], target_y: int) -> list[tuple[int, 
 
 def part1(data: list[tuple[Coord, Coord]], target_y: int) -> int:
 
-    def simplify_ranges(ranges: list[tuple[int, int]]) -> tuple[int, int]:
+    def simplify_ranges(ranges: list[tuple[int, int]]) -> list[tuple[int, int]]:
         # sorting ranges by start
         r = sorted(ranges)
-        a1, a2 = r[0]
-        for b1, b2 in r[1:]:
+        start, end = r[0]
+        rngs = []
+        for s, e in r[1:]:
             # ranges are assumed to simplify down to a single one for part1
-            if (a1 <= b1 <= a2 <= b2) or (a2 + 1 == b1):
-                a2 = b2
-            elif not (a1 <= b1 and b2 <= a2):
-                raise ValueError('Unreachable state')
+            if (start <= s <= end <= e) or (end + 1 == s):
+                end = e
+            elif not (start <= s and e <= end):
+                rngs.append((start, end))
+                start, end = s, e
 
-        return a1, a2
+        if not rngs or rngs[-1] != (start, end):
+            rngs.append((start, end))
+
+        return rngs
 
     sensors = set([s for s, _ in data])
     beacons = set([b for _, b in data])
@@ -63,21 +68,23 @@ def part1(data: list[tuple[Coord, Coord]], target_y: int) -> int:
     delts = deltoids(data)
     rngs = ranges(delts, target_y)
 
-    min_, max_ = simplify_ranges(rngs)
+    r = simplify_ranges(rngs)
     # sum of range
-    n = max_ - min_ + 1
+    n = sum(max_ - min_ + 1 for min_, max_ in r)
 
     # subtracting 'S's
     for sx, sy in sensors:
         if sy == target_y:
-            if min_ <= sx <= max_:
-                n -= 1
+            for min_, max_ in r:
+                if min_ <= sx <= max_:
+                    n -= 1
 
     # subtracting 'B's
     for bx, by in beacons:
         if by == target_y:
-            if min_ <= bx <= max_:
-                n -= 1
+            for min_, max_ in r:
+                if min_ <= bx <= max_:
+                    n -= 1
 
     return n
 
