@@ -1,7 +1,7 @@
 import unittest
 
 _16 = __import__('16')
-_16.MAXIMUM_PATHS_ONLY = False
+_16.LEAVES_ONLY = False
 
 
 class Day01(unittest.TestCase):
