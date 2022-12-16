@@ -4,7 +4,7 @@ import unittest
 _11 = __import__('11')
 
 
-class Day01(unittest.TestCase):
+class AoCTest(unittest.TestCase):
 
     data = _11.get_data(r'''Monkey 0:
   Starting items: 79, 98

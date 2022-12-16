@@ -4,7 +4,7 @@ _16 = __import__('16')
 _16.LEAVES_ONLY = False
 
 
-class Day01(unittest.TestCase):
+class AoCTest(unittest.TestCase):
 
     data = _16.get_data(r'''Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
 Valve BB has flow rate=13; tunnels lead to valves CC, AA

@@ -3,7 +3,7 @@ import unittest
 _09 = __import__('09')
 
 
-class Day01(unittest.TestCase):
+class AoCTest(unittest.TestCase):
 
     data1 = _09.get_data(r'''R 4
 U 4

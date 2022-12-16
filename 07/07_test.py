@@ -3,7 +3,7 @@ import unittest
 _07 = __import__('07')
 
 
-class Day01(unittest.TestCase):
+class AoCTest(unittest.TestCase):
 
     data = _07.get_data(r'''$ cd /
 $ ls
