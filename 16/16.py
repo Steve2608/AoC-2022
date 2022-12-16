@@ -4,6 +4,8 @@ from collections import deque
 
 from timing_util import print_elapsed, timestamp_nano
 
+MAXIMUM_PATHS_ONLY: bool = True
+
 
 def get_data(content: str) -> dict[str, tuple[int, list[str]]]:
     connections = {}
@@ -16,17 +18,20 @@ def get_data(content: str) -> dict[str, tuple[int, list[str]]]:
 def dfs(adjacent, start, time):
 
     def dfs_rec(curr, duration):
-        for adj, d in adjacent[curr].items():
-            if duration + d + 1 <= time and adj not in visited:
+        modified = False
+        for adj, dur in adjacent[curr].items():
+            if duration + dur + 1 <= time and adj not in visited:
+                modified = True
                 visited.add(adj)
                 stack.append(adj)
 
-                yield from dfs_rec(adj, duration + d + 1)
+                yield from dfs_rec(adj, duration + dur + 1)
 
                 stack.pop()
                 visited.discard(adj)
 
-        yield stack
+        if not modified or not MAXIMUM_PATHS_ONLY:
+            yield stack
 
     stack = deque()
     visited = {start}
@@ -64,10 +69,9 @@ def search(adjacent: dict[str, list[str]], flows: dict[str, int], start: str, ti
 
 
 def shortest_path(data, flows, start):
-    waypoints = {k: None for k in flows}
-    waypoints[start] = None
+    waypoints = {start: None}
 
-    for k in waypoints:
+    for k in data:
         visited = set()
         distances = {k: 0}
         fringe = deque([k])
