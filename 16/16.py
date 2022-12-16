@@ -116,7 +116,7 @@ def part2(data: dict[str, tuple[int, list[str]]], start: str = 'AA', time: int =
     m = 0
     # takes a while
     for (p1, x), (p2, y) in it.combinations(gain_for_path.items(), r=2):
-        if x + y >= m and all(p not in p1 for p in p2):
+        if x + y > m and all(p not in p1 for p in p2):
             m = x + y
 
     return m
