@@ -4,6 +4,7 @@ from copy import deepcopy
 from timing_util import print_elapsed, timestamp_nano
 
 MAX_ROCK_HEIGHT = 4
+DEFAULT_X_OFFSET = 2
 ROCKS = [['....', '....', '....', '####'], ['....', '.#..', '###.', '.#..'], ['....', '..#.', '..#.', '###.'],
          ['#...', '#...', '#...', '#...'], ['....', '....', '##..', '##..']]
 WIDTH = 7
@@ -14,11 +15,11 @@ def print_chambers(chambers: list[list[str]]):
 
 
 def segment(rock: str | None = None) -> list[list[str]]:
-    seg = [list('.' * WIDTH) for _ in range(4)]
+    seg = [list('.' * WIDTH) for _ in range(MAX_ROCK_HEIGHT)]
     if rock:
-        for i, layer in enumerate(rock[::-1]):
-            for j, r in enumerate(layer, 2):
-                seg[len(seg) - 1 - i][j] = r
+        for i, layer in enumerate(rock):
+            for j, r in enumerate(layer, DEFAULT_X_OFFSET):
+                seg[i][j] = r
     return seg
 
 
