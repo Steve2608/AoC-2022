@@ -1,7 +1,7 @@
 import itertools as it
-from collections import deque
-from timing_util import print_elapsed, timestamp_nano
 from copy import deepcopy
+
+from timing_util import print_elapsed, timestamp_nano
 
 MAX_ROCK_HEIGHT = 4
 ROCKS = [['....', '....', '....', '####'], ['....', '.#..', '###.', '.#..'], ['....', '..#.', '..#.', '###.'],
@@ -30,6 +30,7 @@ def has_collision(field: list[list[str]], rock: list[list[str]]) -> bool:
 
 
 def set_rock(field: list[list[str]], rock: list[list[str]]):
+    # 'logical or' with rocks
     for f, r in zip(field, rock):
         for i, r_i in enumerate(r):
             if r_i == '#':
@@ -62,18 +63,18 @@ def can_shift_right(field: list[list[str]], rock: list[list[str]]) -> bool:
 
 def solve(data: str, n_steps: int) -> int:
 
-    def move_rock():
+    def step_rock():
         i_rock, rock = next(rocks)
         seg = segment(rock)
 
-        # executes at least 4 times
+        # executes at least MAX_ROCK_HEIGHT + 1 times
         for depth in it.count():
-            grid = chambers[depth:depth + MAX_ROCK_HEIGHT]
+            grid = chamber[depth:depth + MAX_ROCK_HEIGHT]
             prev = deepcopy(seg)
 
             if has_collision(grid, seg):
                 depth -= 1
-                set_rock(chambers[depth:depth + MAX_ROCK_HEIGHT], prev)
+                set_rock(chamber[depth:depth + MAX_ROCK_HEIGHT], prev)
                 return i_rock, i_direction
 
             i_direction, direction = next(directions)
@@ -86,44 +87,45 @@ def solve(data: str, n_steps: int) -> int:
                     for l in seg:
                         l.append(l.pop(0))
 
-    def restore_buffer():
-        nonlocal height
+    def step_chamber():
+        nonlocal chamber, height
         for d in range(buf_len):
-            if any(c == '#' for c in chambers[d]):
+            if any(c == '#' for c in chamber[d]):
                 # restore buffer on top
                 for depth in range(buf_len - d):
-                    chambers.insert(0, list('.' * WIDTH))
+                    chamber.insert(0, list('.' * WIDTH))
 
                 for col in range(WIDTH):
                     col_heights[col] += buf_len - d
                     for depth in range(buf_len - d, col_heights[col]):
-                        if chambers[depth][col] == '#':
+                        if chamber[depth][col] == '#':
                             col_heights[col] = depth
                             break
 
                 height += buf_len - d
-                break
+
+                # keep only the necessary bit in memory
+                chamber = chamber[:max(col_heights) + 1]
+                return
 
     # infinite iterators
     directions = ((i % len(data), d) for i, d in enumerate(it.cycle(data)))
     rocks = ((i % len(ROCKS), r) for i, r in enumerate(it.cycle(ROCKS)))
 
     # setup
-    chambers = segment() + [list('.' * WIDTH), list('.' * WIDTH), list('.') * WIDTH, list('#' * WIDTH)]
-    buf_len = len(chambers) - 1
+    chamber = segment() + [list('.' * WIDTH), list('.' * WIDTH), list('.') * WIDTH, list('#' * WIDTH)]
+    buf_len = len(chamber) - 1
 
-    col_heights = [len(chambers)] * WIDTH
+    col_heights = [len(chamber)] * WIDTH
     height = 0
     step = 0
     # checking for periods
     states = {}
     while step < n_steps:
-        i_rock, i_direction = move_rock()
-        restore_buffer()
+        i_rock, i_direction = step_rock()
+        step_chamber()
 
-        # keep only the necessary bit in memory
-        chambers = chambers[:max(col_heights) + 1]
-
+        # part2
         if states is not None:
             state = i_rock, i_direction, tuple(col_heights)
             if state in states:
