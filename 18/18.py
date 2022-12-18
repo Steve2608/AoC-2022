@@ -25,26 +25,23 @@ def part1(data: list[Coord]) -> int:
 def part2(data: list[Coord]) -> int:
 
     def bfs(start: Coord) -> set[Coord]:
-        # before we do anything, we check if 'start' is part of an internal structure already
-        if start in air:
-            return
-
         fringe = deque([start])
         visited = set()
         while fringe:
             curr = fringe.popleft()
-            if curr in visited or curr in air:
+            if curr in visited:
                 continue
 
             visited.add(curr)
             cx, cy, cz = curr
-            for x, y, z in [(0, 0, -1), (0, 0, 1), (0, -1, 0), (0, 1, 0), (-1, 0, 0), (1, 0, 0)]:
+            for x, y, z in [(cx, cy, cz - 1), (cx, cy, cz + 1), (cx, cy - 1, cz), (cx, cy + 1, cz), (cx - 1, cy, cz),
+                            (cx + 1, cy, cz)]:
                 # if one neighbour reaches the padded fringe -> we're not part of an internal structure
-                if not (0 < cx + x < n) or not (0 < cy + y < n) or not (0 < cz + z < n):
+                if not (0 < x < n) or not (0 < y < n) or not (0 < z < n):
                     return
 
-                if grid[cx + x][cy + y][cz + z] == '.':
-                    fringe.append((cx + x, cy + y, cz + z))
+                if grid[x][y][z] == '.':
+                    fringe.append((x, y, z))
 
         air.update(visited)
 
@@ -61,7 +58,7 @@ def part2(data: list[Coord]) -> int:
     # search air-pockets
     air = set()
     for x, y, z in it.product(*([range(1, n)] * 3)):
-        if grid[x][y][z] == '.':
+        if grid[x][y][z] == '.' and (x, y, z) not in air:
             bfs((x, y, z))
 
     return part1(data) - part1(air)
