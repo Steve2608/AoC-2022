@@ -1,6 +1,6 @@
 from typing import TypeAlias
 
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 Coord: TypeAlias = tuple[int, int]
 
@@ -97,12 +97,9 @@ def part2(data: list[list[Coord]]) -> int:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('14/input.txt') as in_file:
+            data = get_data(in_file.read())
 
-    with open('14/input.txt') as in_file:
-        data = get_data(in_file.read())
-
-    print(f'part1: {part1(data)}')
-    print(f'part2: {part2(data)}')
-
-    print_elapsed(start)
+        print(f'part1: {part1(data)}')
+        print(f'part2: {part2(data)}')

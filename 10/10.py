@@ -1,4 +1,4 @@
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 
 def get_data(content: str) -> list[str]:
@@ -64,12 +64,9 @@ def part2(instructions: list[str], crt_width: int = 40) -> int:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('10/input.txt') as in_file:
+            data = get_data(in_file.read())
 
-    with open('10/input.txt') as in_file:
-        data = get_data(in_file.read())
-
-    print(f'part1: {part1(data)}')
-    print(f'part2:\n{part2(data, crt_width=40)}')
-
-    print_elapsed(start)
+        print(f'part1: {part1(data)}')
+        print(f'part2:\n{part2(data, crt_width=40)}')

@@ -1,7 +1,7 @@
 import itertools as it
 from copy import deepcopy
 
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 MAX_ROCK_HEIGHT = 4
 DEFAULT_X_OFFSET = 2
@@ -147,12 +147,9 @@ def solve(data: str, n_steps: int) -> int:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('17/input.txt') as in_file:
+            data = in_file.read()
 
-    with open('17/input.txt') as in_file:
-        data = in_file.read()
-
-    print(f'part1: {solve(data, n_steps=2022)}')
-    print(f'part2: {solve(data, n_steps=1_000_000_000_000)}')
-
-    print_elapsed(start)
+        print(f'part1: {solve(data, n_steps=2022)}')
+        print(f'part2: {solve(data, n_steps=1_000_000_000_000)}')

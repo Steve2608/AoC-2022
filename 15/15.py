@@ -1,19 +1,18 @@
 import re
 from typing import TypeAlias
 
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 Coord: TypeAlias = tuple[int, int]
 
 
 def get_data(content: str) -> list[tuple[Coord, Coord]]:
     data = [
-            tuple(
-                map(
-                    int,
-                    re.search(r'Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)',
-                              line).groups())) for line in content.splitlines()
-        ]
+        tuple(
+            map(int,
+                re.search(r'Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)', line).groups()))
+        for line in content.splitlines()
+    ]
     return [((l[0], l[1]), (l[2], l[3])) for l in data]
 
 
@@ -116,12 +115,9 @@ def part2(data: list[tuple[Coord, Coord]], min_y: int, max_y: int) -> int:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('15/input.txt') as in_file:
+            data = get_data(in_file.read())
 
-    with open('15/input.txt') as in_file:
-        data = get_data(in_file.read())
-
-    print(f'part1: {part1(data, 2_000_000)}')
-    print(f'part2: {part2(data, 0, 4_000_000)}')
-
-    print_elapsed(start)
+        print(f'part1: {part1(data, 2_000_000)}')
+        print(f'part2: {part2(data, 0, 4_000_000)}')

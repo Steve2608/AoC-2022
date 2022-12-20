@@ -1,4 +1,4 @@
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 
 def get_data(content: str, n_stacks: int) -> tuple[list[str], list[tuple[int, int, int]]]:
@@ -40,12 +40,9 @@ def part2(data: list[str], instructions: list[tuple[int, int, int]]) -> str:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('05/input.txt') as in_file:
+            data, instructions = get_data(in_file.read(), n_stacks=9)
 
-    with open('05/input.txt') as in_file:
-        data, instructions = get_data(in_file.read(), n_stacks=9)
-
-    print(f'part1: {part1(data, instructions)}')
-    print(f'part2: {part2(data, instructions)}')
-
-    print_elapsed(start)
+        print(f'part1: {part1(data, instructions)}')
+        print(f'part2: {part2(data, instructions)}')

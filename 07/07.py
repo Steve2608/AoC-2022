@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 
 def get_data(content: str) -> dict[str, int]:
@@ -37,12 +37,9 @@ def part2(sizes: dict[str, int]) -> int:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('07/input.txt') as in_file:
+            sizes = get_data(in_file.read())
 
-    with open('07/input.txt') as in_file:
-        sizes = get_data(in_file.read())
-
-    print(f'part1: {part1(sizes)}')
-    print(f'part2: {part2(sizes)}')
-
-    print_elapsed(start)
+        print(f'part1: {part1(sizes)}')
+        print(f'part2: {part2(sizes)}')

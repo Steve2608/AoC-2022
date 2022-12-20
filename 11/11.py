@@ -6,7 +6,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from typing import Iterator
 
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 
 @dataclass(frozen=True, slots=True, repr=False, eq=False, order=False, unsafe_hash=False)
@@ -96,12 +96,9 @@ def part2(monkeys: list[Monkey], rounds: int) -> int:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('11/input.txt') as in_file:
+            monkeys = get_data(in_file.read())
 
-    with open('11/input.txt') as in_file:
-        monkeys = get_data(in_file.read())
-
-    print(f'part1: {part1(deepcopy(monkeys), 20, worry_decay=3)}')
-    print(f'part2: {part2(deepcopy(monkeys), 10_000)}')
-
-    print_elapsed(start)
+        print(f'part1: {part1(deepcopy(monkeys), 20, worry_decay=3)}')
+        print(f'part2: {part2(deepcopy(monkeys), 10_000)}')

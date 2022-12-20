@@ -1,4 +1,4 @@
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 
 def get_data(content: str) -> list[list[int]]:
@@ -53,12 +53,9 @@ def part2(grid: list[list[int]]) -> int:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('08/input.txt') as in_file:
+            data = get_data(in_file.read())
 
-    with open('08/input.txt') as in_file:
-        data = get_data(in_file.read())
-
-    print(f'part1: {part1(data)}')
-    print(f'part2: {part2(data)}')
-
-    print_elapsed(start)
+        print(f'part1: {part1(data)}')
+        print(f'part2: {part2(data)}')

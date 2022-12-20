@@ -1,7 +1,7 @@
 from collections import deque
 from typing import TypeAlias
 
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 Coord: TypeAlias = tuple[float, float]
 
@@ -96,13 +96,10 @@ def part2(grid: list[list[str]], strt: list[Coord], end: Coord, best) -> int:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('12/input.txt') as in_file:
+            grid, s, strt, end = get_data(in_file.read())
 
-    with open('12/input.txt') as in_file:
-        grid, s, strt, end = get_data(in_file.read())
-
-    p1 = part1(grid, s, end)
-    print(f'part1: {p1}')
-    print(f'part2: {part2(grid, strt, end, p1)}')
-
-    print_elapsed(start)
+        p1 = part1(grid, s, end)
+        print(f'part1: {p1}')
+        print(f'part2: {part2(grid, strt, end, p1)}')

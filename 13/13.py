@@ -1,7 +1,7 @@
 import math
 from functools import cmp_to_key
 
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 
 def cmp_distress(left, right) -> int:
@@ -35,12 +35,9 @@ def part2(data: str, dividers: tuple) -> int:
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('13/input.txt') as in_file:
+            data = in_file.read()
 
-    with open('13/input.txt') as in_file:
-        data = in_file.read()
-
-    print(f'part1: {part1(data)}')
-    print(f'part2: {part2(data, dividers=([[6]], [[2]]))}')
-
-    print_elapsed(start)
+        print(f'part1: {part1(data)}')
+        print(f'part2: {part2(data, dividers=([[6]], [[2]]))}')

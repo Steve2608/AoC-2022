@@ -1,4 +1,4 @@
-from timing_util import print_elapsed, timestamp_nano
+from timing_util import Timing
 
 
 def get_data(content: str) -> list[int]:
@@ -32,12 +32,9 @@ def solve(data: list[int], encryption_key: int = None, n_mixing: int = 1) -> int
 
 
 if __name__ == '__main__':
-    start = timestamp_nano()
+    with Timing():
+        with open('20/input.txt') as in_file:
+            data = get_data(in_file.read())
 
-    with open('20/input.txt') as in_file:
-        data = get_data(in_file.read())
-
-    print(f'part1: {solve(data)}')
-    print(f'part2: {solve(data, encryption_key=811589153, n_mixing=10)}')
-
-    print_elapsed(start)
+        print(f'part1: {solve(data)}')
+        print(f'part2: {solve(data, encryption_key=811589153, n_mixing=10)}')
