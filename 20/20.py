@@ -6,26 +6,29 @@ def get_data(content: str) -> list[int]:
 
 
 def solve(data: list[int], encryption_key: int = None, n_mixing: int = 1) -> int:
-    if encryption_key:
-        data = [x * encryption_key for x in data]
-
     i_zero = data.index(0)
     n = len(data)
 
+    if encryption_key:
+        data = [x * encryption_key for x in data]
+
     # numbers are not unique -> generate unique key
     data = list(enumerate(data))
-    copy = data.copy()
+    ring = data.copy()
     for _ in range(n_mixing):
         for key_num in data:
-            i = copy.index(key_num)
-            target = i + copy.pop(i)[1]
-            if -n <= target < n:
-                copy.insert(target, key_num)
-            else:
-                copy.insert(target % (n - 1), key_num)
+            i = ring.index(key_num)
+            i += ring.pop(i)[1]
 
-    i_zero = copy.index((i_zero, 0))
-    return sum([copy[(i_zero + i) % n][1] for i in [1000, 2000, 3000]])
+            # python negative indexing works in [-n, n)
+            if not (-n <= i < n):
+                # otherwise wrap around the n-1 long list
+                i %= n - 1
+
+            ring.insert(i, key_num)
+
+    i_zero = ring.index((i_zero, 0))
+    return sum([ring[(i_zero + i) % n][1] for i in [1000, 2000, 3000]])
 
 
 if __name__ == '__main__':
