@@ -5,7 +5,8 @@ from typing import TypeAlias
 
 from timing_util import Timing
 
-Blueprint: TypeAlias = tuple[int, tuple[int, int, int, int, int, int]]
+Costs: TypeAlias = tuple[int, int, int, int, int, int]
+Blueprint: TypeAlias = tuple[int, Costs]
 
 
 def get_data(content: str) -> list[Blueprint]:
@@ -20,8 +21,10 @@ def get_data(content: str) -> list[Blueprint]:
     return data
 
 
-def solve(cost_o, cost_c, cost_ob_o, cost_ob_c, cost_g_o, cost_g_ob, time: int) -> int:
+def solve(costs: Costs, time: int) -> int:
+    cost_o, cost_c, cost_ob_o, cost_ob_c, cost_g_o, cost_g_ob = costs
     max_cost_ore = max([cost_o, cost_c, cost_ob_o, cost_g_o])
+
     fringe = deque([((0, 0, 0, 0), (1, 0, 0, 0), time)])
     visited = set()
     best_geodes = 0
@@ -67,11 +70,11 @@ def solve(cost_o, cost_c, cost_ob_o, cost_ob_c, cost_g_o, cost_g_ob, time: int) 
 
 
 def part1(data: list[Blueprint]) -> int:
-    return sum(_id * solve(*robot, time=24) for _id, robot in data)
+    return sum(_id * solve(costs, time=24) for _id, costs in data)
 
 
 def part2(data: list[Blueprint]) -> int:
-    return math.prod(solve(*robot, time=32) for _, robot in data[:3])
+    return math.prod(solve(costs, time=32) for _, costs in data[:3])
 
 
 if __name__ == '__main__':
