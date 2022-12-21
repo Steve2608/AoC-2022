@@ -1,4 +1,3 @@
-from collections import deque
 from functools import cache
 
 from timing_util import Timing
