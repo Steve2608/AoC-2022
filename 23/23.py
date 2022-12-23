@@ -58,7 +58,7 @@ def empty_grid_like(grid: list[list[str]]) -> list[list[str]]:
 
 def score(data: list[list[str]]) -> tuple[tuple[int, int], tuple[int, int]]:
     (min_ud, max_ud), (min_lr, max_lr) = bounding_box(data)
-    
+
     s = 0
     for row in data[min_ud:max_ud]:
         for space in row[min_lr:max_lr]:
@@ -108,7 +108,7 @@ def part12(data: list[list[str]], n_rounds: int) -> int:
                                 break
                 else:
                     # could not find a proposal, elf stays where it is
-                    movements.append(((ud, lr), (ud, lr)))   
+                    movements.append(((ud, lr), (ud, lr)))
 
         i += 1
         if all(src == dst for src, dst in movements):
