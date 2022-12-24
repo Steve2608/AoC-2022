@@ -67,7 +67,7 @@ def score(data: list[list[str]]) -> tuple[tuple[int, int], tuple[int, int]]:
     return s
 
 
-def part12(data: list[list[str]], n_rounds: int) -> int:
+def solve(data: list[list[str]], n_rounds: int) -> int:
     grid = deepcopy(data)
     proposals = deque(['north', 'south', 'west', 'east'])
     neighbors = [(x, y) for x, y in it.product([-1, 0, 1], [-1, 0, 1]) if x or y]
@@ -139,5 +139,5 @@ if __name__ == '__main__':
         with open('23/input.txt') as in_file:
             data = get_data(in_file.read())
 
-        print(f'part1: {part12(data, n_rounds=10)}')
-        print(f'part2: {part12(data, n_rounds=None)}')
+        print(f'part1: {solve(data, n_rounds=10)}')
+        print(f'part2: {solve(data, n_rounds=None)}')

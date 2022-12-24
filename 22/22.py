@@ -28,7 +28,7 @@ def get_data(content: str) -> tuple[list[list[str]], tuple[int, str], int]:
     return grid, walks, last
 
 
-def score(curr: tuple[int, int], facing: int, directions: str) -> int:
+def score(curr: tuple[int, int], facing: int) -> int:
     ud, lr = curr
     return 1000 * (ud + 1) + 4 * (lr + 1) + facing
 
@@ -96,7 +96,7 @@ def part1(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
 
     amount = last
     curr = walk(curr)
-    return score(curr, facing, directions)
+    return score(curr, facing)
 
 
 # cube layout is
@@ -236,7 +236,7 @@ def part2(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
 
     amount = last
     curr = walk(curr)
-    return score(curr, facing, directions)
+    return score(curr, facing)
 
 
 if __name__ == '__main__':
