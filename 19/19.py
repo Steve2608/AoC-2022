@@ -1,6 +1,8 @@
 import math
+import multiprocessing as mp
 import re
 from collections import deque
+from functools import partial
 from typing import TypeAlias
 
 from timing_util import Timing
@@ -69,11 +71,19 @@ def solve(costs: Costs, time: int) -> int:
 
 
 def part1(data: list[Blueprint]) -> int:
-    return sum(_id * solve(costs, time=24) for _id, costs in data)
+    func = partial(solve, time=24)
+    with mp.Pool(processes=int(mp.cpu_count() * (2/3))) as pool:
+        geodes = pool.map(func, [costs for _, costs in data])
+
+    return sum(_id * g for (_id, _), g in zip(data, geodes))
 
 
 def part2(data: list[Blueprint]) -> int:
-    return math.prod(solve(costs, time=32) for _, costs in data[:3])
+    func = partial(solve, time=32)
+    with mp.Pool(processes=min(3, int(mp.cpu_count() * 1/2))) as pool:
+        geodes = pool.map(func, [costs for _, costs in data[:3]])
+
+    return math.prod(geodes)
 
 
 if __name__ == '__main__':

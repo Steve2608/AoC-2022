@@ -1,4 +1,6 @@
+import multiprocessing as mp
 import re
+from functools import partial
 from typing import TypeAlias
 
 from timing_util import Timing
@@ -88,30 +90,30 @@ def part1(data: list[tuple[Coord, Coord]], target_y: int) -> int:
     return n
 
 
+def find_part2_parallel(target_y, delts):
+    # sorting ranges by start
+    r = sorted(ranges(delts, target_y))
+    a1, a2 = r[0]
+    for b1, b2 in r[1:]:
+        if (a1 <= b1 <= a2 <= b2) or (a2 + 1 == b1):
+            a2 = b2
+        elif not (a1 <= b1 and b2 <= a2):
+            # assuming there's only a single free space, the NEXT x-coordinate has to be it
+            # so we take the lower range's max and +1 to it
+            return (a2 + 1) * 4000000 + target_y
+
+
 def part2(data: list[tuple[Coord, Coord]], min_y: int, max_y: int) -> int:
-
-    def simplify_ranges(ranges: list[tuple[int, int]]) -> int | None:
-        # sorting ranges by start
-        r = sorted(ranges)
-        a1, a2 = r[0]
-        for b1, b2 in r[1:]:
-            if (a1 <= b1 <= a2 <= b2) or (a2 + 1 == b1):
-                a2 = b2
-            elif not (a1 <= b1 and b2 <= a2):
-                # assuming there's only a single free space, the NEXT x-coordinate has to be it
-                # so we take the lower range's max and +1 to it
-                return a2 + 1
-
     # max/min y coordinate for each sensors range
     delts = deltoids(data)
 
-    for target_y in range(min_y, max_y + 1):
-        # [start, end] in target_y
-        rngs = ranges(delts, target_y)
+    func = partial(find_part2_parallel, delts=delts)
+    with mp.Pool(processes=int(mp.cpu_count() * (2/3))) as pool:
+        result = pool.map(func, range(min_y, max_y + 1))
 
-        if x := simplify_ranges(rngs):
-            # tuning freq
-            return x * 4000000 + target_y
+    r = list(filter(bool, result))
+    assert len(r) == 1
+    return r[0]
 
 
 if __name__ == '__main__':
