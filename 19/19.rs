@@ -54,18 +54,15 @@ fn solve(
     let mut best_geodes = 0;
 
     while !fringe.is_empty() {
-        let ((mut o, mut c, mut ob, g), (mut bot_o, mut bot_c, mut bot_ob, bot_g), mut t) =
+        let ((mut o, mut c, mut ob, g), (bot_o, bot_c, bot_ob, bot_g), mut t) =
             fringe.pop_front().unwrap();
-
-        if t == 0 {
-            best_geodes = max(g, best_geodes);
+        
+        // reduce search-depth by one
+        // no matter what action is taken by at time==1 it does not change the number of geodes in time==0
+        if t == 1 {
+            best_geodes = max(g + bot_g, best_geodes);
             continue;
         }
-
-        // discard surplus resources in production to reduce the number of states
-        bot_o = min(bot_o, max_cost_ore);
-        bot_c = min(bot_c, cost_ob_c);
-        bot_ob = min(bot_ob, cost_g_ob);
 
         // throw away surplus resources that cannot be spent in time
         o = min(o, t * max_cost_ore - bot_o * (t - 1));
@@ -86,7 +83,7 @@ fn solve(
             t,
         ));
 
-        // buy ore, clay, obsidian, geode bot
+        // buy ore, clay, obsidian, geode bot but never beyond a point where it cannot be spent
         if o >= cost_o && bot_o < max_cost_ore {
             fringe.push_back((
                 (o + bot_o - cost_o, c + bot_c, ob + bot_ob, g + bot_g),
