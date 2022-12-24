@@ -20,24 +20,26 @@ def setup_blizzards(data: list[list[str]]) -> dict[tuple[int, int], list[str]]:
 
 def move_blizzards(data: list[list[str]], blizzards: dict[tuple[int, int], list[str]]):
     blizzards_new = defaultdict(list)
+    max_ud = len(data) - 1
+    max_lr = len(data[0]) - 1
     for (ud, lr), spaces in blizzards.items():
         for space in spaces:
             match space:
                 case '>':
                     ud_, lr_ = ud, lr + 1
-                    if lr_ == len(data[0]) - 1:
+                    if lr_ >= max_lr:
                         lr_ = 1
                 case '<':
                     ud_, lr_ = ud, lr - 1
-                    if lr_ == 0:
-                        lr_ = len(data[0]) - 2
+                    if lr_ <= 0:
+                        lr_ = max_lr - 1
                 case '^':
                     ud_, lr_ = ud - 1, lr
                     if ud_ == 0:
-                        ud_ = len(data) - 2
+                        ud_ = max_ud - 1
                 case 'v':
                     ud_, lr_ = ud + 1, lr
-                    if ud_ == len(data) - 1:
+                    if ud_ >= max_ud:
                         ud_ = 1
 
             blizzards_new[(ud_, lr_)].append(space)
@@ -45,55 +47,66 @@ def move_blizzards(data: list[list[str]], blizzards: dict[tuple[int, int], list[
     return blizzards_new
 
 
-def distance(curr: tuple[int, int], other: tuple[int, int]) -> int:
+def manhattan_dist(curr: tuple[int, int], other: tuple[int, int]) -> int:
     return abs(other[0] - curr[0]) + abs(other[1] - curr[1])
 
 
-def quickest_path(data: list[list[str]], src: tuple[int, int], dst: tuple[int, int], blizzards: dict[tuple[int, int], list[str]]) -> tuple[int, dict[tuple[int, int], list[str]]]:
-    fringe = PriorityQueue()
-    fringe.put((distance(src, dst), 0, src, blizzards))
-    visited = set()
-    while fringe:
-        _, time, curr, blizzards = fringe.get()
-
-        if (curr, time) in visited:
-            continue
-        visited.add((curr, time))
-
-        if curr == dst:
-            return time, blizzards
-
-        blizzards_next = move_blizzards(data, blizzards)
-        neighbors = [(curr[0], curr[1]), (curr[0], curr[1] + 1), (curr[0], curr[1] - 1),
-                     (curr[0] + 1, curr[1]), (curr[0] - 1, curr[1])]
-        time += 1
-        for neigh in filter(lambda neigh: neigh not in blizzards_next, neighbors):
-            ud, lr = neigh
-            # never just camp in start
-            if (1 <= ud <= len(data) - 2 and 1 <= lr <= len(data[0]) - 2) or neigh in {src, dst}:
-                # as heuristic put in best-case scenario:
-                # in time (spent so far) + distance(neigh, end) we will have made it to the end
-                # guaranteed to be optimal but fewer suboptimal nodes will be expanded
-                fringe.put((time + distance(neigh, dst), time, neigh, blizzards_next))
-
-    return -1, None
-
-
 def solve(data: list[list[str]]) -> int:
+    def bfs(src: tuple[int, int], dst: tuple[int, int], time: int = 0) -> tuple[int, dict[tuple[int, int], list[str]]]:
+        edges = {src, dst}
+
+        fringe = PriorityQueue()
+        fringe.put((manhattan_dist(src, dst) + time, (time, src)))
+        visited = set()
+        while fringe:
+            # discard heuristic
+            _, state = fringe.get()
+
+            if state in visited:
+                continue
+            visited.add(state)
+
+            time, curr = state
+            if curr == dst:
+                return time
+
+            time += 1
+            if time < len(blizzards_at_time):
+                blizzards = blizzards_at_time[time]
+            else:
+                blizzards = move_blizzards(data, blizzards_at_time[-1])
+                blizzards_at_time.append(blizzards)
+
+            # do nothing, right, left, up, down
+            neighbors = [(curr[0], curr[1]), (curr[0], curr[1] + 1), (curr[0], curr[1] - 1),
+                         (curr[0] + 1, curr[1]), (curr[0] - 1, curr[1])]
+            for nghbr in neighbors:
+                if ((1 <= nghbr[0] <= max_ud and 1 <= nghbr[1] <= max_lr) or nghbr in edges) and nghbr not in blizzards:
+                    # as heuristic put in best-case scenario:
+                    # in time (spent so far) + distance(neigh, end) we will have made it to the end
+                    # guaranteed to be optimal and fewer suboptimal nodes will be expanded
+                    fringe.put((time + manhattan_dist(nghbr, dst), (time, nghbr)))
+
+        return -1
+
     start = (0, 1)
-    end = (len(data) - 1, len(data[0]) - 2)
-    blizzards = setup_blizzards(data)
+    max_ud = len(data) - 2
+    max_lr = len(data[0]) - 2
+    end = (max_ud + 1, max_lr)
+
+    # save blizzards at timestamp
+    blizzards_at_time = [setup_blizzards(data)]
 
     # go to end: start -> end (time=373)
-    time1, blizzards = quickest_path(data, start, end, blizzards)
+    time1 = bfs(start, end, time=0)
     yield time1
 
-    # go back to start to pick up snacks: end -> start (time=333)
-    time2, blizzards = quickest_path(data, end, start, blizzards)
-    # go back to end: start -> end (time=291)
-    time3, blizzards = quickest_path(data, start, end, blizzards)
+    # go back to start to pick up snacks: end -> start (time=373+333)
+    time2 = bfs(end, start, time=time1)
+    # go back to end: start -> end (time=373+333+291)
+    time3 = bfs(start, end, time=time2)
 
-    yield time1 + time2 + time3
+    yield time3
 
 
 if __name__ == '__main__':
