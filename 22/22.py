@@ -9,7 +9,7 @@ def print_grid(grid: list[list[str]]):
 
 def get_data(content: str) -> tuple[list[list[str]], tuple[int, str], int]:
     grid, walks = content.split('\n\n')
-    
+
     # parsing last number
     for i in range(1, len(walks)):
         try:
@@ -24,7 +24,7 @@ def get_data(content: str) -> tuple[list[list[str]], tuple[int, str], int]:
             row.extend(list(' ' * (row_len - len(row))))
 
     walks = [(int(amount), direction) for amount, direction in re.findall(r'(\d+)([RL])', walks)]
-    
+
     return grid, walks, last
 
 
@@ -42,6 +42,7 @@ def turn(facing: int, rotation: str, directions: str) -> int:
 
 def find_start(grid):
     return 0, grid[0].index('.')
+
 
 def part1(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
     def walk(curr: tuple[int, int]) -> tuple[int, int]:
@@ -79,7 +80,7 @@ def part1(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
                     if grid[(_ud + 1) % UD][lr] == '#':
                         break
                     ud = (_ud + 1) % UD
-        
+
         return ud, lr
 
     grid, walks, last = data
@@ -96,6 +97,7 @@ def part1(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
     amount = last
     curr = walk(curr)
     return score(curr, facing, directions)
+
 
 # cube layout is
 # .12
@@ -150,13 +152,13 @@ def part2(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
         def wrap_cube():
             # which face are we on
             face_id, (face_ud, face_lr) = get_cube_face(ud, lr)
-            
+
             # get new face
             new_face, new_facing = connections[(face_id, facing)]
-            
+
             # get new local coordinates
             new_ud, new_lr = new_coordinates(face_ud, face_lr, facing, new_facing)
-            
+
             # map to global coordinates
             return new_facing, get_global_coord(new_ud, new_lr, new_face)
 
@@ -169,7 +171,7 @@ def part2(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
                 case 'L':
                     if grid[ud][(lr - 1) % LR] == ' ' or lr == 0:
                         new_facing, (ud_, lr_) = wrap_cube()
-                        
+
                         # if we hit a wall, just stay where we are
                         if grid[ud_][lr_] == '#':
                             break
@@ -182,7 +184,7 @@ def part2(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
                 case 'R':
                     if grid[ud][(lr + 1) % LR] == ' ' or lr == LR - 1:
                         new_facing, (ud_, lr_) = wrap_cube()
-                        
+
                         # if we hit a wall, just stay where we are
                         if grid[ud_][lr_] == '#':
                             break
@@ -195,7 +197,7 @@ def part2(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
                 case 'U':
                     if grid[(ud - 1) % UD][lr] == ' ' or ud == 0:
                         new_facing, (ud_, lr_) = wrap_cube()
-                        
+
                         # if we hit a wall, just stay where we are
                         if grid[ud_][lr_] == '#':
                             break
@@ -208,7 +210,7 @@ def part2(data: tuple[list[list[str]], tuple[int, str], int]) -> int:
                 case 'D':
                     if grid[(ud + 1) % UD][lr] == ' ' or ud == UD - 1:
                         new_facing, (ud_, lr_) = wrap_cube()
-                        
+
                         # if we hit a wall, just stay where we are
                         if grid[ud_][lr_] == '#':
                             break

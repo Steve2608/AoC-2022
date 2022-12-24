@@ -34,7 +34,7 @@ def part2(instructions: list[str], crt_width: int = 40) -> int:
     def shift_i():
         nonlocal i
         i = (i + 1) % crt_width
-    
+
     def append_buf():
         if sprite - 1 <= i <= sprite + 1:
             buf.append('#')
@@ -56,10 +56,10 @@ def part2(instructions: list[str], crt_width: int = 40) -> int:
 
                 shift_i()
                 sprite += int(num)
-    
+
     for i, step in enumerate(range(crt_width, crt_width*6, crt_width)):
         buf.insert(step + i, '\n')
-    
+
     return ''.join(buf)
 
 

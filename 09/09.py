@@ -42,8 +42,9 @@ def part12(instructions: list[tuple[str, int]], n_knots: int = 9) -> tuple[int, 
 
             visited1.add(knots[1])
             visited2.add(knots[-1])
-        
+
     return len(visited1), len(visited2)
+
 
 if __name__ == '__main__':
     with Timing():

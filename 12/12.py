@@ -50,7 +50,7 @@ def bfs(
         curr = fringe.popleft()
         if curr in visited:
             continue
-        
+
         visited.add(curr)
         dist = distances[curr] + 1
 
@@ -61,19 +61,19 @@ def bfs(
             if height(grid, left) <= max_height and left not in visited:
                 fringe.append(left)
                 distances[left] = dist
-        
+
         if curr_y < len(grid[curr_x]) - 1:
             right = curr_x, curr_y + 1
             if height(grid, right) <= max_height and right not in visited:
                 fringe.append(right)
                 distances[right] = dist
-        
+
         if curr_x > 0:
             up = curr_x - 1, curr_y
             if height(grid, up) <= max_height and up not in visited:
                 fringe.append(up)
                 distances[up] = dist
-        
+
         if curr_x < len(grid) - 1:
             down = curr_x + 1, curr_y
             if height(grid, down) <= max_height and down not in visited:
