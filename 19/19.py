@@ -30,30 +30,29 @@ def solve(costs: Costs, time: int) -> int:
     best_geodes = 0
     while fringe:
         (o, c, ob, g), (bot_o, bot_c, bot_ob, bot_g), time = fringe.popleft()
-        if time == 0:
-            best_geodes = max(g, best_geodes)
+        # reduce search-depth by one
+        # no matter what action is taken by at time==1 it does not change the number of geodes in time==0
+        if time == 1:
+            best_geodes = max(g + bot_g, best_geodes)
             continue
 
-        # discard surplus resources in production to reduce the number of states
-        bot_o = min(bot_o, max_cost_ore)
-        bot_c = min(bot_c, cost_ob_c)
-        bot_ob = min(bot_ob, cost_g_ob)
-
         # throw away surplus resources that cannot be spent in time
-        o = min(o, time * max_cost_ore - bot_o * (time - 1))
-        c = min(c, time * cost_ob_c - bot_c * (time - 1))
-        ob = min(ob, time * cost_g_ob - bot_ob * (time - 1))
+        if o > (spendable_o := time * max_cost_ore - bot_o * (time - 1)):
+            o = spendable_o
+        if c > (spendable_c := time * cost_ob_c - bot_c * (time - 1)):
+            c = spendable_c
+        if ob > (spendable_ob := time * cost_g_ob - bot_ob * (time - 1)):
+            ob = spendable_ob
 
         if (state := ((o, c, ob, g), (bot_o, bot_c, bot_ob, bot_g))) in visited:
             continue
-
         visited.add(state)
 
         time -= 1
         # do nothing
         fringe.append(((o + bot_o, c + bot_c, ob + bot_ob, g + bot_g), (bot_o, bot_c, bot_ob, bot_g), time))
 
-        # buy ore, clay, obsidian, geode bot
+        # buy ore, clay, obsidian, geode bot but never beyond a point where it cannot be spent
         if o >= cost_o and bot_o < max_cost_ore:
             fringe.append(
                 ((o + bot_o - cost_o, c + bot_c, ob + bot_ob, g + bot_g), (bot_o + 1, bot_c, bot_ob, bot_g), time))
